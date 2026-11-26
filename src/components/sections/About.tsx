@@ -58,7 +58,7 @@ export default function About() {
             <div className="font-display text-3xl font-bold text-[#8b5a2b] dark:text-[#d4a373]">
               7+
             </div>
-            <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a]">catégories de fêtes</div>
+            <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">catégories de fêtes</div>
           </motion.div>
         </motion.div>
 
@@ -75,13 +75,13 @@ export default function About() {
             Hari&apos;mbola, <br />
             <span className="gradient-text">l&apos;art du gâteau sur mesure</span>
           </h2>
-          <p className="mt-6 text-[#6b5a4a] dark:text-[#b8a88a] leading-relaxed">
+          <p className="mt-6 text-[#6b5a4a] dark:text-[#a89880] leading-relaxed">
             Hari&apos;mbola est une pâtisserie artisanale dédiée à transformer vos
             moments précieux en souvenirs gourmands. Mariage, fiançailles,
             anniversaire d&apos;enfant, Noël, Saint-Valentin — nous créons des gâteaux
             personnalisés selon vos photos, vos textes et vos envies.
           </p>
-          <p className="mt-4 text-[#6b5a4a] dark:text-[#b8a88a] leading-relaxed">
+          <p className="mt-4 text-[#6b5a4a] dark:text-[#a89880] leading-relaxed">
             De la « Montagne de Chocolat » pour les amateurs de chocolat à la
             « Bible dorée » pour vos fiançailles, chaque création est pensée pour
             émouvoir. Choisissez votre portion, votre décoration, et laissez-nous
@@ -102,7 +102,7 @@ export default function About() {
                 <h3 className="font-display text-lg font-semibold text-[#2a1d13] dark:text-[#f5e9d3]">
                   {f.title}
                 </h3>
-                <p className="mt-1 text-sm text-[#6b5a4a] dark:text-[#b8a88a]">{f.text}</p>
+                <p className="mt-1 text-sm text-[#6b5a4a] dark:text-[#a89880]">{f.text}</p>
               </motion.div>
             ))}
           </div>

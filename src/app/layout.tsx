@@ -28,7 +28,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
-      <body className="font-sans antialiased bg-[#fef7f2] text-[#2a1d13] dark:bg-[#1a120b] dark:text-[#f5e9d3]" suppressHydrationWarning>
+      <body className="font-sans antialiased bg-[#fef7f2] text-[#2a1d13] dark:bg-[#0a0604] dark:text-[#f5e9d3]" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>

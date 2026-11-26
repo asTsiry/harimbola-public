@@ -25,6 +25,14 @@ body {
   color: var(--cream);
   overflow-x: hidden;
 }
+.dark {
+  --bg: #0a0604;
+  --bg-soft: #1a120b;
+  --cream: #f5e9d3;
+  --muted: #a89880;
+  --gold: #d4a373;
+  --gold-bright: #f0c987;
+}
 .dark body {
   background: radial-gradient(1200px 600px at 80% -10%, rgba(232,160,160,0.08), transparent 60%),
               radial-gradient(900px 500px at 10% 20%, rgba(212,163,115,0.06), transparent 60%),

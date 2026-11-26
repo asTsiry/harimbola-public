@@ -35,7 +35,7 @@ export default function Catalog() {
               className={`px-4 py-2 rounded-full text-sm transition ${
                 filter === "all"
                   ? "bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold shadow"
-                  : "bg-white dark:bg-[#2a1d13] text-[#6b5a4a] dark:text-[#b8a88a] hover:text-[#c97b7b] dark:hover:text-[#e8a0a0] border border-[#e8a0a0]/30"
+                  : "bg-white dark:bg-[#1a120b] text-[#6b5a4a] dark:text-[#a89880] hover:text-[#c97b7b] dark:hover:text-[#e8a0a0] border border-[#e8a0a0]/30"
               }`}
             >
               Tout
@@ -90,11 +90,11 @@ export default function Catalog() {
                 <h3 className="font-display text-2xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
                   {cake.titre}
                 </h3>
-                <p className="mt-2 text-[#6b5a4a] dark:text-[#b8a88a] text-sm leading-relaxed line-clamp-3">
+                <p className="mt-2 text-[#6b5a4a] dark:text-[#a89880] text-sm leading-relaxed line-clamp-3">
                   {cake.description}
                 </p>
 
-                <div className="mt-4 flex items-center gap-4 text-xs text-[#6b5a4a] dark:text-[#b8a88a]">
+                <div className="mt-4 flex items-center gap-4 text-xs text-[#6b5a4a] dark:text-[#a89880]">
                   <span className="flex items-center gap-1">
                     <Heart className="w-3.5 h-3.5 text-[#e07a7a]" />
                     {cake.likes}
@@ -109,7 +109,7 @@ export default function Catalog() {
                 </div>
 
                 <div className="mt-4">
-                  <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a] mb-1">
+                  <div className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1">
                     Portions disponibles
                   </div>
                   <div className="flex flex-wrap gap-1.5">
@@ -126,7 +126,7 @@ export default function Catalog() {
 
                 <div className="mt-6 flex items-center justify-between">
                   <div>
-                    <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a]">Prix portion</div>
+                    <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">Prix portion</div>
                     <div className="font-display text-2xl font-bold text-[#8b5a2b] dark:text-[#d4a373]">
                       {formatAriary(cake.prixPortion)}
                     </div>

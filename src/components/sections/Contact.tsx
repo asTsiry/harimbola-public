@@ -42,7 +42,7 @@ export default function Contact() {
                 <p className="text-[#2a1d13] dark:text-[#f5e9d3] font-semibold">
                   Message envoyé !
                 </p>
-                <p className="text-sm text-[#6b5a4a] dark:text-[#b8a88a] mt-2">
+                <p className="text-sm text-[#6b5a4a] dark:text-[#a89880] mt-2">
                   Nous vous répondrons très vite.
                 </p>
               </div>
@@ -58,23 +58,23 @@ export default function Contact() {
                   <input
                     required
                     placeholder="Votre nom"
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2a1d13]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#b8a88a]/60 focus:outline-none focus:border-[#d4a373]"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
                   />
                   <input
                     required
                     placeholder="Contact"
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2a1d13]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#b8a88a]/60 focus:outline-none focus:border-[#d4a373]"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
                   />
                 </div>
                 <input
                   placeholder="Adresse"
-                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2a1d13]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#b8a88a]/60 focus:outline-none focus:border-[#d4a373]"
+                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
                 />
                 <textarea
                   required
                   rows={5}
                   placeholder="Votre message"
-                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2a1d13]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#b8a88a]/60 focus:outline-none focus:border-[#d4a373] resize-none"
+                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373] resize-none"
                 />
                 <button
                   type="submit"
@@ -101,16 +101,16 @@ export default function Contact() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <input
                     type="date"
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2a1d13]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#d4a373]"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#d4a373]"
                   />
                   <input
                     type="time"
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#2a1d13]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#d4a373]"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#d4a373]"
                   />
                 </div>
                 <button
                   type="button"
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold hover:bg-white dark:hover:bg-[#2a1d13]/10 transition"
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold hover:bg-white dark:hover:bg-[#1a120b]/10 transition"
                 >
                   <Calendar className="w-4 h-4" /> Demander un rendez-vous
                 </button>
@@ -123,7 +123,7 @@ export default function Contact() {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a]">Téléphone</div>
+                  <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">Téléphone</div>
                   <div className="text-[#2a1d13] dark:text-[#f5e9d3] font-semibold">
                     +261 34 46 381 28
                   </div>
@@ -134,7 +134,7 @@ export default function Contact() {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a]">Email</div>
+                  <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">Email</div>
                   <div className="text-[#2a1d13] dark:text-[#f5e9d3] font-semibold">
                     contact@harimbola.mg
                   </div>
@@ -145,7 +145,7 @@ export default function Contact() {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a]">Adresse</div>
+                  <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">Adresse</div>
                   <div className="text-[#2a1d13] dark:text-[#f5e9d3] font-semibold">
                     III AB 38 Ter F Andrononobe, Madagascar
                   </div>

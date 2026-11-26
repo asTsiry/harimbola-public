@@ -14,8 +14,8 @@ export default function CTA() {
           transition={{ duration: 0.6 }}
           className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-[#e8a0a0] via-[#c97b7b] to-[#b07a3a] p-10 sm:p-14 text-white shadow-2xl"
         >
-          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white dark:bg-[#2a1d13]/15 blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white dark:bg-[#2a1d13]/10 blur-2xl" />
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-white dark:bg-[#1a120b]/15 blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white dark:bg-[#1a120b]/10 blur-2xl" />
           <div className="relative grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h2 className="font-display text-3xl sm:text-4xl font-bold leading-tight">
@@ -29,7 +29,7 @@ export default function CTA() {
             <div className="flex flex-wrap gap-3 md:justify-end">
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-[#2a1d13] text-[#c97b7b] dark:text-[#e8a0a0] font-semibold shadow-lg hover:scale-105 transition"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-[#1a120b] text-[#c97b7b] dark:text-[#e8a0a0] font-semibold shadow-lg hover:scale-105 transition"
               >
                 <Calendar className="w-4 h-4" /> Prendre rendez-vous
               </a>

@@ -43,7 +43,7 @@ export default function Categories() {
               Une catégorie pour <span className="gradient-text">chaque fête</span>
             </h2>
           </div>
-          <p className="text-sm text-[#6b5a4a] dark:text-[#b8a88a] max-w-sm">
+          <p className="text-sm text-[#6b5a4a] dark:text-[#a89880] max-w-sm">
             Du mariage à la Saint-Valentin, en passant par les anniversaires
             d&apos;enfants — explorez nos créations par thème.
           </p>
@@ -64,7 +64,7 @@ export default function Categories() {
                 className={`absolute inset-0 bg-gradient-to-br ${gradients[i % gradients.length]} opacity-90`}
               />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.35),transparent_60%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_60%)]" />
-              <div className="relative w-12 h-12 rounded-2xl bg-white dark:bg-[#2a1d13]/25 backdrop-blur flex items-center justify-center text-white group-hover:scale-110 transition">
+              <div className="relative w-12 h-12 rounded-2xl bg-white dark:bg-[#1a120b]/25 backdrop-blur flex items-center justify-center text-white group-hover:scale-110 transition">
                 {icons[c.id]}
               </div>
               <span className="relative font-display text-lg font-semibold text-white mt-auto">

@@ -19,8 +19,8 @@ export default function Hero() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#fef7f2] dark:from-[#1a120b] via-[#fef7f2]/85 dark:via-[#1a120b]/85 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#fef7f2] dark:from-[#1a120b] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#fef7f2] dark:from-[#0a0604] via-[#fef7f2]/85 dark:via-[#0a0604]/85 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#fef7f2] dark:from-[#0a0604] via-transparent to-transparent" />
       </div>
 
       <div className="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-[#e8a0a0]/30 blur-3xl" />
@@ -32,7 +32,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#2a1d13]/70 backdrop-blur border border-[#e8a0a0]/40 text-sm text-[#c97b7b] dark:text-[#e8a0a0] mb-6 shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#1a120b]/70 backdrop-blur border border-[#e8a0a0]/40 text-sm text-[#c97b7b] dark:text-[#e8a0a0] mb-6 shadow-sm"
           >
             <Sparkles className="w-4 h-4" />
             Pâtisserie artisanale à Madagascar
@@ -53,7 +53,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.25 }}
-            className="mt-6 text-base text-[#6b5a4a] dark:text-[#b8a88a] max-w-xl leading-relaxed"
+            className="mt-6 text-base text-[#6b5a4a] dark:text-[#a89880] max-w-xl leading-relaxed"
           >
             Mariage, fiançailles, anniversaire, Noël, Saint-Valentin — chaque
             occasion mérite un gâteau sur mesure. Personnalisé selon vos envies,
@@ -75,7 +75,7 @@ export default function Hero() {
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-[#2a1d13] text-[#2a1d13] dark:text-[#f5e9d3] font-semibold border border-[#d4a373]/40 shadow-sm hover:bg-[#fef7f2] dark:hover:bg-[#2a1d13] transition"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-[#1a120b] text-[#2a1d13] dark:text-[#f5e9d3] font-semibold border border-[#d4a373]/40 shadow-sm hover:bg-[#fef7f2] dark:hover:bg-[#1a120b] transition"
             >
               Prendre rendez-vous
             </a>
@@ -85,7 +85,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-10 flex items-center gap-6 text-sm text-[#6b5a4a] dark:text-[#b8a88a]"
+            className="mt-10 flex items-center gap-6 text-sm text-[#6b5a4a] dark:text-[#a89880]"
           >
             <div>
               <div className="font-display text-2xl font-bold text-[#8b5a2b] dark:text-[#d4a373]">
@@ -128,9 +128,9 @@ export default function Hero() {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="absolute -bottom-4 -left-8 bg-white dark:bg-[#2a1d13] rounded-2xl px-5 py-3 shadow-xl border border-[#e8a0a0]/30"
+              className="absolute -bottom-4 -left-8 bg-white dark:bg-[#1a120b] rounded-2xl px-5 py-3 shadow-xl border border-[#e8a0a0]/30"
             >
-              <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a]">Prix portion</div>
+              <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">Prix portion</div>
               <div className="font-display text-lg font-bold text-[#8b5a2b] dark:text-[#d4a373]">
                 dès 7 000 Ar
               </div>
@@ -138,9 +138,9 @@ export default function Hero() {
             <motion.div
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 5, repeat: Infinity }}
-              className="absolute top-8 -right-6 bg-white dark:bg-[#2a1d13] rounded-2xl px-5 py-3 shadow-xl border border-[#d4a373]/30"
+              className="absolute top-8 -right-6 bg-white dark:bg-[#1a120b] rounded-2xl px-5 py-3 shadow-xl border border-[#d4a373]/30"
             >
-              <div className="text-xs text-[#6b5a4a] dark:text-[#b8a88a]">Note</div>
+              <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">Note</div>
               <div className="font-display text-lg font-bold text-[#8b5a2b] dark:text-[#d4a373] flex items-center gap-1">
                 4.9 <Star className="w-4 h-4 fill-[#d4a373] text-[#d4a373]" />
               </div>

@@ -48,7 +48,7 @@ export default function Testimonials() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="relative bg-white dark:bg-[#2a1d13] rounded-3xl p-6 shadow-lg border border-[#e8a0a0]/20 card-hover"
+              className="relative bg-white dark:bg-[#1a120b] rounded-3xl p-6 shadow-lg border border-[#e8a0a0]/20 card-hover"
             >
               <Quote className="absolute top-5 right-5 w-8 h-8 text-[#e8a0a0]/30" />
               <div className="flex gap-1 mb-4">
@@ -59,7 +59,7 @@ export default function Testimonials() {
                   />
                 ))}
               </div>
-              <p className="text-[#6b5a4a] dark:text-[#b8a88a] text-sm leading-relaxed">
+              <p className="text-[#6b5a4a] dark:text-[#a89880] text-sm leading-relaxed">
                 « {t.text} »
               </p>
               <div className="mt-5 flex items-center gap-3">
