@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect } from "react";
 import { cakes, categories, formatAriary, imgFor } from "@/lib/mockData";
 import dynamic from "next/dynamic";
 const DateTimeInput = dynamic(() => import("@/components/DateTimeInput"), { ssr: false });
+const LocationPicker = dynamic(() => import("@/components/LocationPicker"), { ssr: false });
 import {
   Heart,
   Frown,
@@ -23,6 +24,8 @@ export default function Catalog() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
   const [orderCake, setOrderCake] = useState<number | null>(null);
+  const [orderStep, setOrderStep] = useState(1);
+  const [orderLocation, setOrderLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [orderPortion, setOrderPortion] = useState<number | null>(null);
   const [orderQty, setOrderQty] = useState(1);
   const [orderType, setOrderType] = useState<"recup" | "livraison">("recup");
@@ -224,6 +227,8 @@ export default function Catalog() {
                       setOrderType("recup");
                       setOrderDate("");
                       setOrderTime("");
+                      setOrderStep(1);
+                      setOrderLocation(null);
                       setOrderAddr("");
                       setOrderContact("");
                       setOrderAvance("");
@@ -556,43 +561,49 @@ export default function Catalog() {
                 }
                 return (
                   <>
-                    <h3 className="font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
-                      Commander — {cake.titre}
-                    </h3>
-                    <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
+                        Commander — {cake.titre}
+                      </h3>
+                      <span className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                        Étape {orderStep} {orderType === "livraison" ? "/ 3" : "/ 2"}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
                       {formatAriary(cake.prixPortion)} / portion
                     </p>
 
-                    <div className="mt-5 space-y-4">
-                      <div>
-                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                          Portion
-                        </label>
-                        <select
-                          value={orderPortion ?? ""}
-                          onChange={(e) => setOrderPortion(Number(e.target.value))}
-                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                        >
-                          {cake.portions.map((p) => (
-                            <option key={p} value={p}>
-                              {p} personnes
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                          Quantité
-                        </label>
-                        <input
-                          type="number"
-                          min={1}
-                          value={orderQty}
-                          onChange={(e) => setOrderQty(Math.max(1, Number(e.target.value)))}
-                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                        />
-                      </div>
-                      <div className="flex gap-4">
+                    {orderStep === 1 && (
+                      <div className="mt-5 space-y-4">
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Portion
+                          </label>
+                          <select
+                            value={orderPortion ?? ""}
+                            onChange={(e) => setOrderPortion(Number(e.target.value))}
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          >
+                            {cake.portions.map((p) => (
+                              <option key={p} value={p}>
+                                {p} personnes
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Quantité
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={orderQty}
+                            onChange={(e) => setOrderQty(Math.max(1, Number(e.target.value)))}
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          />
+                        </div>
+                        <div className="flex gap-4">
                           <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
                             <input
                               type="radio"
@@ -607,6 +618,7 @@ export default function Catalog() {
                           <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
                             <input
                               type="radio"
+                              className="radio-lg"
                               name="orderType"
                               value="livraison"
                               checked={orderType === "livraison"}
@@ -615,62 +627,146 @@ export default function Catalog() {
                             À livrer
                           </label>
                         </div>
-                      <DateTimeInput
-                        date={orderDate}
-                        time={orderTime}
-                        onDateChange={setOrderDate}
-                        onTimeChange={setOrderTime}
-                        dateLabel={orderType === "livraison" ? "Date de livraison" : "Date de récupération"}
-                        timeLabel={orderType === "livraison" ? "Heure de livraison" : "Heure de récupération"}
-                      />
-                      {orderType === "livraison" && (
+                        <DateTimeInput
+                          date={orderDate}
+                          time={orderTime}
+                          onDateChange={setOrderDate}
+                          onTimeChange={setOrderTime}
+                          dateLabel={orderType === "livraison" ? "Date de livraison" : "Date de récupération"}
+                          timeLabel={orderType === "livraison" ? "Heure de livraison" : "Heure de récupération"}
+                        />
+
                         <div>
                           <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Adresse de livraison
+                            Contact <span className="text-red-500">*</span>
                           </label>
                           <input
-                            value={orderAddr}
-                            onChange={(e) => setOrderAddr(e.target.value)}
-                            placeholder="Votre adresse"
+                            value={orderContact}
+                            onChange={(e) => setOrderContact(e.target.value)}
+                            placeholder="Votre contact"
                             className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                           />
                         </div>
-                      )}
-                      <div>
-                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                          Contact <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          value={orderContact}
-                          onChange={(e) => setOrderContact(e.target.value)}
-                          placeholder="Votre contact"
-                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Avance à payer (Ar)
+                          </label>
+                          <input
+                            value={orderAvance}
+                            onChange={(e) => setOrderAvance(e.target.value)}
+                            placeholder="0"
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          />
+                        </div>
+                        <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20">
+                          Total estimé:{" "}
+                          <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                            {formatAriary(cake.prixPortion * orderQty)}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => setOrderStep(orderType === "livraison" ? 2 : 3)}
+                          className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
+                        >
+                          Suivant
+                        </button>
+                      </div>
+                    )}
+
+                    {orderStep === 2 && orderType === "livraison" && (
+                      <div className="mt-5 space-y-4">
+                        <p className="text-sm text-[#6b5a4a] dark:text-[#a89880]">
+                          Cliquez sur la carte pour choisir votre position.
+                        </p>
+                        <LocationPicker
+                          value={orderLocation}
+                          onChange={setOrderLocation}
+                          address={orderAddr}
+                          onAddressChange={setOrderAddr}
                         />
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => setOrderStep(1)}
+                            className="flex-1 py-2.5 rounded-full glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold text-sm"
+                          >
+                            Retour
+                          </button>
+                          <button
+                            onClick={() => setOrderStep(3)}
+                            disabled={!orderLocation}
+                            className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm disabled:opacity-50"
+                          >
+                            Suivant
+                          </button>
+                        </div>
                       </div>
-                      <div>
-                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                          Avance à payer (Ar)
-                        </label>
-                        <input
-                          value={orderAvance}
-                          onChange={(e) => setOrderAvance(e.target.value)}
-                          placeholder="0"
-                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                        />
+                    )}
+
+                    {orderStep === 3 && (
+                      <div className="mt-5 space-y-4">
+                        <h4 className="font-display text-lg font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
+                          Paiement
+                        </h4>
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Nom sur la carte
+                          </label>
+                          <input
+                            placeholder="Nom complet"
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Numéro de carte
+                          </label>
+                          <input
+                            placeholder="1234 5678 9012 3456"
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                              Expiration
+                            </label>
+                            <input
+                              placeholder="MM/AA"
+                              className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                              CVC
+                            </label>
+                            <input
+                              placeholder="123"
+                              className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                            />
+                          </div>
+                        </div>
+                        <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20">
+                          Total à payer:{" "}
+                          <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                            {formatAriary(cake.prixPortion * orderQty)}
+                          </span>
+                        </div>
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => setOrderStep(orderType === "livraison" ? 2 : 1)}
+                            className="flex-1 py-2.5 rounded-full glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold text-sm"
+                          >
+                            Retour
+                          </button>
+                          <button
+                            onClick={() => setOrderDone(true)}
+                            className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
+                          >
+                            Payer
+                          </button>
+                        </div>
                       </div>
-                      <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20">
-                        Total estimé:{" "}
-                        <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
-                          {formatAriary(cake.prixPortion * orderQty)}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setOrderDone(true)}
-                        className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
-                      >
-                        Valider la commande
-                      </button>
-                    </div>
+                    )}
                   </>
                 );
               })()}
