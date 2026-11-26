@@ -135,14 +135,14 @@ export default function Catalog() {
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-[#e8a0a0]/20 to-transparent pointer-events-none z-0" />
               <div className="relative h-40 overflow-hidden">
                 <Image
-                  src={imgFor(cake.photos[0])}
+                  src={imgFor(cake.photos?.[0])}
                   alt={cake.titre}
                   fill
                   sizes="(max-width: 768px) 100vw, 25vw"
                   className="object-cover group-hover:scale-110 transition duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1a120b]/70 via-transparent to-transparent" />
-                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full glass text-[10px] text-[#f0c987] dark:text-[#d4a373]">
+                <div className="absolute top-2 left-2 px-2 py-0.5 rounded-full glass text-[10px] text-[#8b5a2b] dark:text-[#d4a373]">
                   {categories.find((c) => c.id === cake.categorieId)?.nom}
                 </div>
                 <button
@@ -156,7 +156,7 @@ export default function Catalog() {
                 >
                   <Eye className="w-4 h-4" />
                 </button>
-                <div className="absolute bottom-2 right-2 flex items-center gap-1 text-[#f0c987]">
+                <div className="absolute bottom-2 right-2 flex items-center gap-1 text-[#8b5a2b] dark:text-[#f0c987]">
                   <Star className="w-3.5 h-3.5 fill-[#f0c987]" />
                   <span className="text-xs font-semibold">4.9</span>
                 </div>
@@ -252,7 +252,7 @@ export default function Catalog() {
                       className="absolute inset-0"
                     >
                       <Image
-                        src={imgFor(selected.photos[imgIdx])}
+                        src={imgFor(selected.photos?.[imgIdx] ?? selected.photos?.[0])}
                         alt={selected.titre}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
@@ -290,7 +290,7 @@ export default function Catalog() {
                     </>
                   )}
                   <div className="absolute bottom-4 left-4 right-4">
-                    <div className="px-3 py-1 rounded-full glass text-xs text-[#f0c987] dark:text-[#d4a373] inline-block mb-2">
+                    <div className="px-3 py-1 rounded-full glass text-xs text-[#8b5a2b] dark:text-[#d4a373] inline-block mb-2">
                       {categories.find((c) => c.id === selected.categorieId)?.nom}
                     </div>
                     <p className="text-sm text-white leading-relaxed drop-shadow">

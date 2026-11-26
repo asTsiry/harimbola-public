@@ -91,5 +91,9 @@ export const cakes: Cake[] = [
 export const formatAriary = (n: number) =>
   new Intl.NumberFormat("fr-MG").format(n) + " Ar";
 
-export const imgFor = (photo: string) =>
-  photo.startsWith("bg") ? `/media/bg/${photo}` : `/media/gen/${photo}`;
+export const imgFor = (photo?: string) =>
+  !photo
+    ? "/media/gen/hero.jpg"
+    : photo.startsWith("bg")
+    ? `/media/bg/${photo}`
+    : `/media/gen/${photo}`;

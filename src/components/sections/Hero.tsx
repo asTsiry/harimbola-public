@@ -16,6 +16,8 @@ export default function Hero() {
           alt="Gâteau signature Hari'mbola"
           fill
           sizes="100vw"
+          loading="eager"
+          fetchPriority="high"
           className="object-cover"
           priority
         />
