@@ -5,7 +5,7 @@ export type Cake = {
   titre: string;
   description: string;
   prixPortion: number; // Ariary
-  photo: string; // filename under /media/upload/products_pic or /media/upload
+  photos: string[]; // filenames under /media/gen or /media/bg
   categorieId: number;
   portions: number[]; // nb_portion values
   likes: number;
@@ -44,7 +44,7 @@ export const cakes: Cake[] = [
     description:
       "Offrez-en une pour ces fous du chocolat ! Avec son nom personnalisable, son chocolat fondu... ils aimeront à coup sûr !",
     prixPortion: 8000,
-    photo: "montagne.jpg",
+    photos: ["montagne.jpg", "hero.jpg", "bg1.jpg", "bg2.jpg"],
     categorieId: 2,
     portions: [6, 8, 10, 12],
     likes: 24,
@@ -56,7 +56,7 @@ export const cakes: Cake[] = [
     description:
       "Mariage ? Fiançailles ? La bible sera toujours là pour vous. Commandez un gâteau en forme de bible avec un texte sacré écrit selon vos demandes.",
     prixPortion: 9000,
-    photo: "bible.jpg",
+    photos: ["bible.jpg", "bg3.jpg", "bg4.jpg", "hero.jpg"],
     categorieId: 1,
     portions: [20, 30],
     likes: 18,
@@ -68,7 +68,7 @@ export const cakes: Cake[] = [
     description:
       "Pour vos enfants qui aiment les super-héros ! Offrez ce gâteau pour son anniversaire. Envoyez-nous photos ou animations, on personnalise pour vous !",
     prixPortion: 10000,
-    photo: "batman.jpg",
+    photos: ["batman.jpg", "bg5.jpg", "bg1.jpg", "bg2.jpg"],
     categorieId: 3,
     portions: [10, 12, 14, 16],
     likes: 31,
@@ -80,7 +80,7 @@ export const cakes: Cake[] = [
     description:
       "Oh mon cœur, je t'aime... hihi. Un joli gâteau personnalisé, fait spécialement pour votre amour.",
     prixPortion: 7000,
-    photo: "love.jpg",
+    photos: ["love.jpg", "bg3.jpg", "bg4.jpg", "hero.jpg"],
     categorieId: 5,
     portions: [4, 6, 8, 10],
     likes: 42,
@@ -91,4 +91,5 @@ export const cakes: Cake[] = [
 export const formatAriary = (n: number) =>
   new Intl.NumberFormat("fr-MG").format(n) + " Ar";
 
-export const imgFor = (photo: string) => `/media/gen/${photo}`;
+export const imgFor = (photo: string) =>
+  photo.startsWith("bg") ? `/media/bg/${photo}` : `/media/gen/${photo}`;

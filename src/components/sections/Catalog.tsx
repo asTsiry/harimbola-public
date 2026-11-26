@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cakes, categories, formatAriary, imgFor } from "@/lib/mockData";
 import {
   Heart,
@@ -19,7 +19,9 @@ import Image from "next/image";
 export default function Catalog() {
   const [filter, setFilter] = useState<number | "all">("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [imgIdx, setImgIdx] = useState(0);
   const [comment, setComment] = useState("");
+  const [descExpanded, setDescExpanded] = useState(false);
   type Cmt = { name: string; avatar: string; time: string; text: string };
   const [comments, setComments] = useState<Record<number, Cmt[]>>({
     1: [
@@ -46,15 +48,27 @@ export default function Catalog() {
     [selected, filtered]
   );
 
+  useEffect(() => {
+    if (!selected) return;
+    const id = setInterval(() => {
+      setImgIdx((i) => (i >= selected.photos.length - 1 ? 0 : i + 1));
+    }, 4000);
+    return () => clearInterval(id);
+  }, [selected]);
+
   const goPrev = () => {
     if (filtered.length === 0) return;
     const i = selectedIdx <= 0 ? filtered.length - 1 : selectedIdx - 1;
     setSelectedId(filtered[i].id);
+    setDescExpanded(false);
+    setImgIdx(0);
   };
   const goNext = () => {
     if (filtered.length === 0) return;
     const i = selectedIdx >= filtered.length - 1 ? 0 : selectedIdx + 1;
     setSelectedId(filtered[i].id);
+    setDescExpanded(false);
+    setImgIdx(0);
   };
 
   return (
@@ -121,7 +135,7 @@ export default function Catalog() {
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-[#e8a0a0]/20 to-transparent pointer-events-none z-0" />
               <div className="relative h-40 overflow-hidden">
                 <Image
-                  src={imgFor(cake.photo)}
+                  src={imgFor(cake.photos[0])}
                   alt={cake.titre}
                   fill
                   sizes="(max-width: 768px) 100vw, 25vw"
@@ -132,7 +146,11 @@ export default function Catalog() {
                   {categories.find((c) => c.id === cake.categorieId)?.nom}
                 </div>
                 <button
-                  onClick={() => setSelectedId(cake.id)}
+                  onClick={() => {
+                    setSelectedId(cake.id);
+                    setDescExpanded(false);
+                    setImgIdx(0);
+                  }}
                   className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 dark:bg-[#0a0604]/80 backdrop-blur flex items-center justify-center text-[#8b5a2b] dark:text-[#d4a373] hover:scale-110 transition shadow"
                   aria-label="Voir le détail"
                 >
@@ -213,7 +231,7 @@ export default function Catalog() {
               exit={{ scale: 0.92, opacity: 0, y: 20 }}
               transition={{ duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl flex flex-col"
+              className="relative w-full max-w-3xl max-h-[95vh] overflow-hidden rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl flex flex-col"
             >
               <button
                 onClick={() => setSelectedId(null)}
@@ -223,17 +241,71 @@ export default function Catalog() {
               </button>
 
               <div className="grid md:grid-cols-2 flex-1 min-h-0">
-                <div className="relative h-52 md:h-full">
-                  <Image
-                    src={imgFor(selected.photo)}
-                    alt={selected.titre}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1a120b]/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full glass text-xs text-[#f0c987] dark:text-[#d4a373]">
-                    {categories.find((c) => c.id === selected.categorieId)?.nom}
+                <div className="relative h-72 md:h-full group">
+                  <AnimatePresence mode="sync">
+                    <motion.div
+                      key={imgIdx}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.7 }}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={imgFor(selected.photos[imgIdx])}
+                        alt={selected.titre}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-70 group-hover:opacity-100 transition duration-500" />
+                  {/* dots at top center */}
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                    {selected.photos.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setImgIdx(idx)}
+                        className={`w-2 h-2 rounded-full transition ${idx === imgIdx ? "bg-white scale-125" : "bg-white/40"}`}
+                        aria-label={`Image ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                  {/* prev/next image */}
+                  {selected.photos.length > 1 && (
+                    <>
+                      <button
+                        onClick={() => setImgIdx((i) => (i <= 0 ? selected.photos.length - 1 : i - 1))}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setImgIdx((i) => (i >= selected.photos.length - 1 ? 0 : i + 1))}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="px-3 py-1 rounded-full glass text-xs text-[#f0c987] dark:text-[#d4a373] inline-block mb-2">
+                      {categories.find((c) => c.id === selected.categorieId)?.nom}
+                    </div>
+                    <p className="text-sm text-white leading-relaxed drop-shadow">
+                      {descExpanded || selected.description.length <= 90
+                        ? selected.description
+                        : selected.description.slice(0, 90) + "…"}
+                    </p>
+                    {selected.description.length > 90 && (
+                      <button
+                        onClick={() => setDescExpanded((v) => !v)}
+                        className="mt-1 text-xs font-semibold text-[#f0c987] hover:underline"
+                      >
+                        {descExpanded ? "Voir moins" : "Voir plus"}
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="p-6 flex flex-col overflow-hidden">
@@ -254,10 +326,6 @@ export default function Catalog() {
                       <Star className="w-3.5 h-3.5 fill-[#d4a373] text-[#d4a373]" /> 4.9
                     </span>
                   </div>
-                  <p className="mt-4 text-sm text-[#6b5a4a] dark:text-[#a89880] leading-relaxed">
-                    {selected.description}
-                  </p>
-
                   <div className="mt-4">
                     <div className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1">
                       Portions disponibles
@@ -302,7 +370,7 @@ export default function Catalog() {
                     <div className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-2">
                       Commentaires
                     </div>
-                    <div className="space-y-3 max-h-28 overflow-y-auto pr-1">
+                    <div className="space-y-3 max-h-44 overflow-y-auto pr-1">
                       {(comments[selected.id] ?? []).map((cm, idx) => (
                         <div key={idx} className="flex gap-2">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#e8a0a0] to-[#c97b7b] flex items-center justify-center text-white text-xs font-bold shrink-0">
