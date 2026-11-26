@@ -81,7 +81,7 @@ export default function Categories() {
                   alt=""
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover scale-110 group-hover:scale-125 transition duration-700"
+                  className="object-cover blur-[2px] scale-110 group-hover:blur-none group-hover:scale-125 transition duration-700"
                   style={{ maskImage: "linear-gradient(315deg, rgba(0,0,0,0.9) -25%, rgba(0,0,0,0.4) 35%, transparent 75%)", WebkitMaskImage: "linear-gradient(315deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 35%, transparent 75%)" }}
                 />
               </div>
