@@ -592,11 +592,7 @@ export default function Catalog() {
                           className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                         />
                       </div>
-                      <div>
-                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                          Type
-                        </label>
-                        <div className="flex gap-4">
+                      <div className="flex gap-4">
                           <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
                             <input
                               type="radio"
