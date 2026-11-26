@@ -297,15 +297,23 @@ export default function Catalog() {
                       {descExpanded || selected.description.length <= 90
                         ? selected.description
                         : selected.description.slice(0, 90) + "…"}
+                      {selected.description.length > 90 && !descExpanded && (
+                        <button
+                          onClick={() => setDescExpanded(true)}
+                          className="ml-1 text-xs font-semibold text-[#f0c987] hover:underline"
+                        >
+                          Voir plus
+                        </button>
+                      )}
+                      {selected.description.length > 90 && descExpanded && (
+                        <button
+                          onClick={() => setDescExpanded(false)}
+                          className="ml-1 text-xs font-semibold text-[#f0c987] hover:underline"
+                        >
+                          Voir moins
+                        </button>
+                      )}
                     </p>
-                    {selected.description.length > 90 && (
-                      <button
-                        onClick={() => setDescExpanded((v) => !v)}
-                        className="mt-1 text-xs font-semibold text-[#f0c987] hover:underline"
-                      >
-                        {descExpanded ? "Voir moins" : "Voir plus"}
-                      </button>
-                    )}
                   </div>
                 </div>
                 <div className="p-6 flex flex-col overflow-hidden">
