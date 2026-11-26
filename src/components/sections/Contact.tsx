@@ -4,12 +4,16 @@ import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, Calendar, Send, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+const DateTimeInput = dynamic(() => import("@/components/DateTimeInput"), { ssr: false });
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
+  const [rdvDate, setRdvDate] = useState("");
+  const [rdvTime, setRdvTime] = useState("");
 
   return (
-    <section id="contact" className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section id="contact" className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-visible">
       <div className="absolute inset-0 -z-10">
         <Image src="/media/bg/bg5.jpg" alt="" fill sizes="100vw" className="object-cover opacity-15 dark:opacity-8 blur-sm scale-110" />
         <div className="absolute inset-0 bg-[#f0e0d4]/80 dark:bg-[#0a0604]/80" />
@@ -60,27 +64,47 @@ export default function Contact() {
                 className="space-y-4"
               >
                 <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1">
+                      Nom <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      required
+                      placeholder="Votre nom"
+                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1">
+                      Contact <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      required
+                      placeholder="Contact"
+                      className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1">
+                    Adresse
+                  </label>
                   <input
-                    required
-                    placeholder="Votre nom"
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
-                  />
-                  <input
-                    required
-                    placeholder="Contact"
+                    placeholder="Adresse"
                     className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
                   />
                 </div>
-                <input
-                  placeholder="Adresse"
-                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373]"
-                />
-                <textarea
-                  required
-                  rows={5}
-                  placeholder="Votre message"
-                  className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373] resize-none"
-                />
+                <div>
+                  <label className="block text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1">
+                    Message <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={5}
+                    placeholder="Votre message"
+                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] placeholder:text-[#6b5a4a] dark:placeholder:text-[#a89880]/60 focus:outline-none focus:border-[#d4a373] resize-none"
+                  />
+                </div>
                 <button
                   type="submit"
                   className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-[#d4a373] to-[#8b5a2b] text-[#1a120b] font-semibold hover:shadow-[0_0_24px_rgba(212,163,115,0.5)] transition"
@@ -103,16 +127,15 @@ export default function Contact() {
                 Prendre rendez-vous
               </h3>
               <form className="space-y-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <input
-                    type="date"
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#d4a373]"
-                  />
-                  <input
-                    type="time"
-                    className="w-full px-4 py-3 rounded-xl bg-white dark:bg-[#1a120b]/5 border border-[#d4a373]/20 text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#d4a373]"
-                  />
-                </div>
+                <DateTimeInput
+                  date={rdvDate}
+                  time={rdvTime}
+                  onDateChange={setRdvDate}
+                  onTimeChange={setRdvTime}
+                  dateLabel="Date du RDV"
+                  timeLabel="Heure du RDV"
+                  required
+                />
                 <button
                   type="button"
                   className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold hover:bg-white dark:hover:bg-[#1a120b]/10 transition"

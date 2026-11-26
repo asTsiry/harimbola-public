@@ -3,6 +3,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo, useEffect } from "react";
 import { cakes, categories, formatAriary, imgFor } from "@/lib/mockData";
+import dynamic from "next/dynamic";
+const DateTimeInput = dynamic(() => import("@/components/DateTimeInput"), { ssr: false });
 import {
   Heart,
   Frown,
@@ -20,6 +22,16 @@ export default function Catalog() {
   const [filter, setFilter] = useState<number | "all">("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
+  const [orderCake, setOrderCake] = useState<number | null>(null);
+  const [orderPortion, setOrderPortion] = useState<number | null>(null);
+  const [orderQty, setOrderQty] = useState(1);
+  const [orderType, setOrderType] = useState<"recup" | "livraison">("recup");
+  const [orderDate, setOrderDate] = useState("");
+  const [orderTime, setOrderTime] = useState("");
+  const [orderAddr, setOrderAddr] = useState("");
+  const [orderContact, setOrderContact] = useState("");
+  const [orderAvance, setOrderAvance] = useState("");
+  const [orderDone, setOrderDone] = useState(false);
   const [comment, setComment] = useState("");
   const [descExpanded, setDescExpanded] = useState(false);
   type Cmt = { name: string; avatar: string; time: string; text: string };
@@ -204,7 +216,21 @@ export default function Catalog() {
                       {formatAriary(cake.prixPortion)}
                     </div>
                   </div>
-                  <button className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-xs hover:shadow transition">
+                  <button
+                    onClick={() => {
+                      setOrderCake(cake.id);
+                      setOrderPortion(cake.portions[0] ?? null);
+                      setOrderQty(1);
+                      setOrderType("recup");
+                      setOrderDate("");
+                      setOrderTime("");
+                      setOrderAddr("");
+                      setOrderContact("");
+                      setOrderAvance("");
+                      setOrderDone(false);
+                    }}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-xs hover:shadow transition"
+                  >
                     <ShoppingCart className="w-3.5 h-3.5" />
                     Commander
                   </button>
@@ -231,7 +257,7 @@ export default function Catalog() {
               exit={{ scale: 0.92, opacity: 0, y: 20 }}
               transition={{ duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-3xl max-h-[95vh] overflow-hidden rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl flex flex-col"
+              className="relative w-full max-w-3xl max-h-[95vh] overflow-visible rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl flex flex-col"
             >
               <button
                 onClick={() => setSelectedId(null)}
@@ -316,7 +342,7 @@ export default function Catalog() {
                     </p>
                   </div>
                 </div>
-                <div className="p-6 flex flex-col overflow-hidden">
+                <div className="p-6 flex flex-col overflow-visible">
                   <h3 className="font-display text-2xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
                     {selected.titre}
                   </h3>
@@ -359,7 +385,18 @@ export default function Catalog() {
                         {formatAriary(selected.prixPortion)}
                       </div>
                     </div>
-                    <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition">
+                    <button
+                      onClick={() => {
+                        setOrderCake(selected.id);
+                        setOrderPortion(selected.portions[0] ?? null);
+                        setOrderQty(1);
+                        setOrderDate("");
+                        setOrderAddr("");
+                        setOrderAvance("");
+                        setOrderDone(false);
+                      }}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
+                    >
                       <ShoppingCart className="w-4 h-4" />
                       Commander
                     </button>
@@ -463,6 +500,184 @@ export default function Catalog() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Order modal */}
+      <AnimatePresence>
+        {orderCake != null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setOrderCake(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 20 }}
+              transition={{ duration: 0.25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl p-6"
+            >
+              <button
+                onClick={() => setOrderCake(null)}
+                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {(() => {
+                const cake = cakes.find((c) => c.id === orderCake);
+                if (!cake) return null;
+                if (orderDone) {
+                  return (
+                    <div className="text-center py-10">
+                      <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-br from-[#e8a0a0] to-[#c97b7b] flex items-center justify-center text-white text-3xl">
+                        ✓
+                      </div>
+                      <h3 className="mt-4 font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
+                        Commande envoyée !
+                      </h3>
+                      <p className="mt-2 text-sm text-[#6b5a4a] dark:text-[#a89880]">
+                        Nous vous contacterons pour confirmer la livraison.
+                      </p>
+                      <button
+                        onClick={() => setOrderCake(null)}
+                        className="mt-6 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm"
+                      >
+                        Fermer
+                      </button>
+                    </div>
+                  );
+                }
+                return (
+                  <>
+                    <h3 className="font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
+                      Commander — {cake.titre}
+                    </h3>
+                    <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1">
+                      {formatAriary(cake.prixPortion)} / portion
+                    </p>
+
+                    <div className="mt-5 space-y-4">
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Portion
+                        </label>
+                        <select
+                          value={orderPortion ?? ""}
+                          onChange={(e) => setOrderPortion(Number(e.target.value))}
+                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                        >
+                          {cake.portions.map((p) => (
+                            <option key={p} value={p}>
+                              {p} personnes
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Quantité
+                        </label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={orderQty}
+                          onChange={(e) => setOrderQty(Math.max(1, Number(e.target.value)))}
+                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Type
+                        </label>
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                            <input
+                              type="radio"
+                              name="orderType"
+                              value="recup"
+                              checked={orderType === "recup"}
+                              onChange={() => setOrderType("recup")}
+                            />
+                            À récupérer
+                          </label>
+                          <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                            <input
+                              type="radio"
+                              name="orderType"
+                              value="livraison"
+                              checked={orderType === "livraison"}
+                              onChange={() => setOrderType("livraison")}
+                            />
+                            À livrer
+                          </label>
+                        </div>
+                      </div>
+                      <DateTimeInput
+                        date={orderDate}
+                        time={orderTime}
+                        onDateChange={setOrderDate}
+                        onTimeChange={setOrderTime}
+                        dateLabel="Date de livraison"
+                        timeLabel="Heure"
+                      />
+                      {orderType === "livraison" && (
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Adresse de livraison
+                          </label>
+                          <input
+                            value={orderAddr}
+                            onChange={(e) => setOrderAddr(e.target.value)}
+                            placeholder="Votre adresse"
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Contact <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          value={orderContact}
+                          onChange={(e) => setOrderContact(e.target.value)}
+                          placeholder="Votre contact"
+                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Avance à payer (Ar)
+                        </label>
+                        <input
+                          value={orderAvance}
+                          onChange={(e) => setOrderAvance(e.target.value)}
+                          placeholder="0"
+                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                        />
+                      </div>
+                      <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20">
+                        Total estimé:{" "}
+                        <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                          {formatAriary(cake.prixPortion * orderQty)}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setOrderDone(true)}
+                        className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
+                      >
+                        Valider la commande
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
             </motion.div>
           </motion.div>
         )}
