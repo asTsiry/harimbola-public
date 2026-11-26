@@ -14,7 +14,7 @@ export default function Footer() {
               alt="Hari'mbola"
               width={160}
               height={68}
-              className="object-contain"
+              className="object-contain dark:brightness-0 dark:invert"
             />
           </div>
           <p className="text-sm text-[#6b5a4a] dark:text-[#a89880] leading-relaxed">

@@ -46,10 +46,10 @@ export default function Navbar() {
               alt="Hari'mbola"
               width={44}
               height={44}
-              className="rounded-full shadow-lg group-hover:scale-110 transition"
+              className="rounded-full shadow-lg group-hover:scale-110 transition dark:brightness-0 dark:invert"
               priority
             />
-            <span className="font-display text-2xl font-bold gradient-text">
+            <span className="font-display text-2xl font-bold gradient-text dark:text-white">
               Hari&apos;mbola
             </span>
           </a>
