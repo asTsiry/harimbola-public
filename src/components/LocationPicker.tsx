@@ -13,6 +13,36 @@ const icon = L.icon({
   iconAnchor: [12, 41],
 });
 
+function ShopMarker({ position }: { position: [number, number] }) {
+  const map = useMap();
+  const [zoom, setZoom] = useState(() => map.getZoom());
+  useMapEvents({
+    zoomend() {
+      setZoom(map.getZoom());
+    },
+  });
+  const show = zoom >= 14;
+  if (!show) return null;
+  const scale = Math.max(0.6, Math.min(1.6, zoom / 14));
+  const logoSize = Math.round(44 * scale);
+  const tail = 16;
+  const totalH = logoSize + tail;
+  const html = `
+    <div style="display:flex;flex-direction:column;align-items:center;">
+      <div style="width:${logoSize}px;height:${logoSize}px;border-radius:50%;background:#fff;padding:2px;box-shadow:0 2px 8px rgba(0,0,0,.3);overflow:hidden;">
+        <img src="/logo.png" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />
+      </div>
+      <div style="width:0;height:0;border-left:${Math.round(6*scale)}px solid transparent;border-right:${Math.round(6*scale)}px solid transparent;border-top:${tail}px solid #fff;margin-top:-1px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));"></div>
+    </div>`;
+  const divIcon = L.divIcon({
+    html,
+    className: "",
+    iconSize: [logoSize, totalH],
+    iconAnchor: [logoSize / 2, totalH],
+  });
+  return <Marker position={position} icon={divIcon} />;
+}
+
 function ClickHandler({ onChange }: { onChange: (lat: number, lng: number) => void }) {
   useMapEvents({
     click(e) {
@@ -36,10 +66,11 @@ type Props = {
 };
 
 export default function LocationPicker({ value, onChange, address, onAddressChange }: Props) {
-  const [satellite, setSatellite] = useState(false);
+  const [satellite, setSatellite] = useState(true);
   const [flyTarget, setFlyTarget] = useState<[number, number] | null>(null);
   const [searching, setSearching] = useState(false);
-  const center: [number, number] = value ? [value.lat, value.lng] : [-18.8792, 47.5079];
+  const shop: [number, number] = [-18.86889, 47.54821];
+  const center: [number, number] = value ? [value.lat, value.lng] : shop;
 
   const handleSearch = async () => {
     if (!address.trim()) return;
@@ -100,7 +131,8 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
             />
           )}
           <ClickHandler onChange={(lat, lng) => onChange({ lat, lng })} />
-          {value && <Marker position={[value.lat, value.lng]} icon={icon} />}
+          <ShopMarker position={shop} />
+        {value && <Marker position={[value.lat, value.lng]} icon={icon} />}
           {flyTarget && <FlyTo center={flyTarget} />}
         </MapContainer>
       </div>
