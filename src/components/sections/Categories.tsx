@@ -75,21 +75,24 @@ export default function Categories() {
               transition={{ duration: 0.5, delay: i * 0.06 }}
               className="group relative overflow-hidden glass rounded-3xl p-6 flex flex-col items-start gap-4 min-h-[140px] card-hover cursor-pointer border border-transparent hover:border-[#e8a0a0]/40 dark:hover:border-[#e8a0a0]/30 transition"
             >
-              <Image
-                src={cardImages[i % cardImages.length]}
-                alt=""
-                fill
-                sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover opacity-20 dark:opacity-10 scale-110 group-hover:scale-125 transition duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#f0e0d4]/90 via-[#f0e0d4]/60 to-transparent dark:from-[#0a0604]/90 dark:via-[#0a0604]/60" />
+              <div className="absolute inset-0">
+                <Image
+                  src={cardImages[i % cardImages.length]}
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover scale-110 group-hover:scale-125 transition duration-700"
+                  style={{ maskImage: "linear-gradient(315deg, rgba(0,0,0,0.9) -25%, rgba(0,0,0,0.4) 35%, transparent 75%)", WebkitMaskImage: "linear-gradient(315deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 35%, transparent 75%)" }}
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-br from-[#e8a0a0]/15 to-transparent dark:from-[#e8a0a0]/8" />
               <div
                 className={`relative w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition ${accents[i % accents.length]}`}
               >
                 {icons[c.id]}
               </div>
               <div className="relative mt-auto">
-                <span className="font-display text-base font-semibold text-[#2a1d13] dark:text-[#f5e9d3]">
+                <span className="font-display text-base font-semibold text-[#2a1d13] dark:text-[#f5e9d3] drop-shadow-sm">
                   {c.nom}
                 </span>
                 <div className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1">

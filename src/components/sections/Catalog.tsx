@@ -72,7 +72,7 @@ export default function Catalog() {
               transition={{ duration: 0.6, delay: i * 0.1 }}
               className="group glass rounded-3xl overflow-hidden card-hover relative"
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-[#e8a0a0]/10 via-transparent to-[#d4a373]/10 pointer-events-none z-0" />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-[#e8a0a0]/25 to-transparent pointer-events-none z-0" />
               <div className="relative h-56 overflow-hidden">
                 <Image
                   src={imgFor(cake.photo)}
