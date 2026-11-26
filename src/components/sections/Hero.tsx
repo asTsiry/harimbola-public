@@ -19,8 +19,8 @@ export default function Hero() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#fef7f2] dark:from-[#0a0604] via-[#fef7f2]/85 dark:via-[#0a0604]/85 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#fef7f2] dark:from-[#0a0604] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#f0e0d4] dark:from-[#0a0604] via-[#f0e0d4]/85 dark:via-[#0a0604]/85 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#f0e0d4] dark:from-[#0a0604] via-transparent to-transparent" />
       </div>
 
       <div className="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full bg-[#e8a0a0]/30 blur-3xl" />
@@ -75,7 +75,7 @@ export default function Hero() {
             </a>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-[#1a120b] text-[#2a1d13] dark:text-[#f5e9d3] font-semibold border border-[#d4a373]/40 shadow-sm hover:bg-[#fef7f2] dark:hover:bg-[#1a120b] transition"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-[#1a120b] text-[#2a1d13] dark:text-[#f5e9d3] font-semibold border border-[#d4a373]/40 shadow-sm hover:bg-[#f0e0d4] dark:hover:bg-[#1a120b] transition"
             >
               Prendre rendez-vous
             </a>

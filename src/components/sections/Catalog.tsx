@@ -12,7 +12,11 @@ export default function Catalog() {
     filter === "all" ? cakes : cakes.filter((c) => c.categorieId === filter);
 
   return (
-    <section id="catalogue" className="relative py-24 px-4 sm:px-6 lg:px-8">
+    <section id="catalogue" className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="absolute inset-0 -z-10">
+        <Image src="/media/bg/bg2.jpg" alt="" fill sizes="100vw" className="object-cover opacity-15 dark:opacity-8 blur-sm scale-110" />
+        <div className="absolute inset-0 bg-[#f0e0d4]/80 dark:bg-[#0a0604]/80" />
+      </div>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -66,8 +70,9 @@ export default function Catalog() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
-              className="group glass rounded-3xl overflow-hidden card-hover"
+              className="group glass rounded-3xl overflow-hidden card-hover relative"
             >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-[#e8a0a0]/10 via-transparent to-[#d4a373]/10 pointer-events-none z-0" />
               <div className="relative h-56 overflow-hidden">
                 <Image
                   src={imgFor(cake.photo)}

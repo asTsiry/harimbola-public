@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
+import Image from "next/image";
 
 const testimonials = [
   {
@@ -23,7 +24,11 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8">
+    <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="absolute inset-0 -z-10">
+        <Image src="/media/bg/bg3.jpg" alt="" fill sizes="100vw" className="object-cover opacity-15 dark:opacity-8 blur-sm scale-110" />
+        <div className="absolute inset-0 bg-[#f0e0d4]/80 dark:bg-[#0a0604]/80" />
+      </div>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -29,7 +29,11 @@ const features = [
 
 export default function About() {
   return (
-    <section id="apropos" className="relative py-24 px-4 sm:px-6 lg:px-8">
+    <section id="apropos" className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="absolute inset-0 -z-10">
+        <Image src="/media/bg/bg4.jpg" alt="" fill sizes="100vw" className="object-cover opacity-15 dark:opacity-8 blur-sm scale-110" />
+        <div className="absolute inset-0 bg-[#f0e0d4]/80 dark:bg-[#0a0604]/80" />
+      </div>
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-center">
         <motion.div
           initial={{ opacity: 0, x: -40 }}
@@ -46,7 +50,7 @@ export default function About() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1a120b]/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2a1d13]/40 dark:from-[#000000]/70 to-transparent" />
           </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}

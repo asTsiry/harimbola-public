@@ -3,30 +3,45 @@
 import { motion } from "framer-motion";
 import { categories, cakes } from "@/lib/mockData";
 import { Cake, Heart, Baby, Snowflake, Sparkles, Cookie, GlassWater } from "lucide-react";
+import Image from "next/image";
 
 const icons: Record<number, React.ReactNode> = {
-  1: <Heart className="w-8 h-8" />,
-  2: <Cake className="w-8 h-8" />,
-  3: <Baby className="w-8 h-8" />,
-  4: <Snowflake className="w-8 h-8" />,
-  5: <Sparkles className="w-8 h-8" />,
-  6: <Cookie className="w-8 h-8" />,
-  7: <GlassWater className="w-8 h-8" />,
+  1: <Heart className="w-6 h-6" />,
+  2: <Cake className="w-6 h-6" />,
+  3: <Baby className="w-6 h-6" />,
+  4: <Snowflake className="w-6 h-6" />,
+  5: <Sparkles className="w-6 h-6" />,
+  6: <Cookie className="w-6 h-6" />,
+  7: <GlassWater className="w-6 h-6" />,
 };
 
-const gradients = [
-  "from-[#e8a0a0] to-[#c97b7b]",
-  "from-[#d4a373] to-[#b07a3a]",
-  "from-[#f0c987] to-[#d4a373]",
-  "from-[#c97b7b] to-[#8b5a2b]",
-  "from-[#e8a0a0] to-[#d4a373]",
-  "from-[#b07a3a] to-[#8b5a2b]",
-  "from-[#d4a373] to-[#e8a0a0]",
+const accents = [
+  "text-[#c97b7b] bg-[#e8a0a0]/15",
+  "text-[#b07a3a] bg-[#d4a373]/15",
+  "text-[#c97b7b] bg-[#e8a0a0]/15",
+  "text-[#8b5a2b] bg-[#d4a373]/20",
+  "text-[#c97b7b] bg-[#e8a0a0]/15",
+  "text-[#b07a3a] bg-[#d4a373]/15",
+  "text-[#c97b7b] bg-[#e8a0a0]/15",
+];
+
+const cardImages = [
+  "/media/bg/bg1.jpg",
+  "/media/bg/bg2.jpg",
+  "/media/bg/bg3.jpg",
+  "/media/bg/bg4.jpg",
+  "/media/bg/bg5.jpg",
+  "/media/gen/montagne.jpg",
+  "/media/gen/love.jpg",
 ];
 
 export default function Categories() {
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8">
+    <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="absolute inset-0 -z-10">
+        <Image src="/media/bg/bg1.jpg" alt="" fill sizes="100vw" priority className="object-cover opacity-15 dark:opacity-8 blur-sm scale-110" />
+        <div className="absolute inset-0 bg-[#f0e0d4]/80 dark:bg-[#0a0604]/80" />
+      </div>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -58,21 +73,29 @@ export default function Categories() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.06 }}
-              className="group relative overflow-hidden rounded-3xl p-6 flex flex-col items-start gap-4 min-h-[150px] card-hover cursor-pointer"
+              className="group relative overflow-hidden glass rounded-3xl p-6 flex flex-col items-start gap-4 min-h-[140px] card-hover cursor-pointer border border-transparent hover:border-[#e8a0a0]/40 dark:hover:border-[#e8a0a0]/30 transition"
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${gradients[i % gradients.length]} opacity-90`}
+              <Image
+                src={cardImages[i % cardImages.length]}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                className="object-cover opacity-20 dark:opacity-10 scale-110 group-hover:scale-125 transition duration-700"
               />
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.35),transparent_60%)] dark:bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.08),transparent_60%)]" />
-              <div className="relative w-12 h-12 rounded-2xl bg-white dark:bg-[#1a120b]/25 backdrop-blur flex items-center justify-center text-white group-hover:scale-110 transition">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#f0e0d4]/90 via-[#f0e0d4]/60 to-transparent dark:from-[#0a0604]/90 dark:via-[#0a0604]/60" />
+              <div
+                className={`relative w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition ${accents[i % accents.length]}`}
+              >
                 {icons[c.id]}
               </div>
-              <span className="relative font-display text-lg font-semibold text-white mt-auto">
-                {c.nom}
-              </span>
-              <div className="relative text-xs text-white/80">
-                {cakes.filter((k) => k.categorieId === c.id).length || 1} création
-                {cakes.filter((k) => k.categorieId === c.id).length > 1 ? "s" : ""}
+              <div className="relative mt-auto">
+                <span className="font-display text-base font-semibold text-[#2a1d13] dark:text-[#f5e9d3]">
+                  {c.nom}
+                </span>
+                <div className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1">
+                  {cakes.filter((k) => k.categorieId === c.id).length || 1} création
+                  {cakes.filter((k) => k.categorieId === c.id).length > 1 ? "s" : ""}
+                </div>
               </div>
             </motion.a>
           ))}
