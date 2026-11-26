@@ -596,6 +596,7 @@ export default function Catalog() {
                           <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
                             <input
                               type="radio"
+                              className="radio-lg"
                               name="orderType"
                               value="recup"
                               checked={orderType === "recup"}
@@ -614,14 +615,13 @@ export default function Catalog() {
                             À livrer
                           </label>
                         </div>
-                      </div>
                       <DateTimeInput
                         date={orderDate}
                         time={orderTime}
                         onDateChange={setOrderDate}
                         onTimeChange={setOrderTime}
-                        dateLabel="Date de livraison"
-                        timeLabel="Heure"
+                        dateLabel={orderType === "livraison" ? "Date de livraison" : "Date de récupération"}
+                        timeLabel={orderType === "livraison" ? "Heure de livraison" : "Heure de récupération"}
                       />
                       {orderType === "livraison" && (
                         <div>
