@@ -16,6 +16,8 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Upload,
+  ImageIcon,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -28,6 +30,9 @@ export default function Catalog() {
   const [orderLocation, setOrderLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [orderPortion, setOrderPortion] = useState<number | null>(null);
   const [orderQty, setOrderQty] = useState(1);
+  const [orderDetails, setOrderDetails] = useState("");
+  const [orderPhoto, setOrderPhoto] = useState<string | null>(null);
+  const [orderPhotoPreview, setOrderPhotoPreview] = useState<string | null>(null);
   const [orderType, setOrderType] = useState<"recup" | "livraison">("recup");
   const [orderDate, setOrderDate] = useState("");
   const [orderTime, setOrderTime] = useState("");
@@ -224,6 +229,9 @@ export default function Catalog() {
                       setOrderCake(cake.id);
                       setOrderPortion(cake.portions[0] ?? null);
                       setOrderQty(1);
+                      setOrderDetails("");
+                      setOrderPhoto(null);
+                      setOrderPhotoPreview(null);
                       setOrderType("recup");
                       setOrderDate("");
                       setOrderTime("");
@@ -518,7 +526,6 @@ export default function Catalog() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-            onClick={() => setOrderCake(null)}
           >
             <motion.div
               initial={{ scale: 0.92, opacity: 0, y: 20 }}
@@ -526,7 +533,7 @@ export default function Catalog() {
               exit={{ scale: 0.92, opacity: 0, y: 20 }}
               transition={{ duration: 0.25 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl p-6"
+              className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl p-6"
             >
               <button
                 onClick={() => setOrderCake(null)}
@@ -565,7 +572,7 @@ export default function Catalog() {
                       <h3 className="font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
                         Commander — {cake.titre}
                       </h3>
-                      <span className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                      <span className="text-xs text-[#6b5a4a] dark:text-[#a89880] mr-12">
                         Étape {orderStep} {orderType === "livraison" ? "/ 3" : "/ 2"}
                       </span>
                     </div>
@@ -574,7 +581,7 @@ export default function Catalog() {
                     </p>
 
                     {orderStep === 1 && (
-                      <div className="mt-5 space-y-4">
+                      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
                             Portion
@@ -603,13 +610,90 @@ export default function Catalog() {
                             className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                           />
                         </div>
-                        <div className="flex gap-4">
-                          <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Détails (couleur, texte, etc.)
+                          </label>
+                          <textarea
+                            value={orderDetails}
+                            onChange={(e) => setOrderDetails(e.target.value)}
+                            rows={3}
+                            placeholder="Précisez vos souhaits..."
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b] resize-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Photo modèle (optionnel)
+                          </label>
+                          <div
+                            onDragOver={(e) => {
+                              e.preventDefault();
+                              e.currentTarget.classList.add("border-[#c97b7b]", "bg-[#e8a0a0]/10");
+                            }}
+                            onDragLeave={(e) => {
+                              e.currentTarget.classList.remove("border-[#c97b7b]", "bg-[#e8a0a0]/10");
+                            }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              e.currentTarget.classList.remove("border-[#c97b7b]", "bg-[#e8a0a0]/10");
+                              const f = e.dataTransfer.files?.[0];
+                              if (f) {
+                                setOrderPhoto(f.name);
+                                setOrderPhotoPreview(URL.createObjectURL(f));
+                              }
+                            }}
+                            onClick={() => document.getElementById("orderPhotoInput")?.click()}
+                            className="border-2 border-dashed border-[#e8a0a0]/40 rounded-2xl p-6 text-center cursor-pointer hover:border-[#c97b7b] transition"
+                          >
                             <input
-                              type="radio"
-                              className="radio-lg"
-                              name="orderType"
-                              value="recup"
+                              id="orderPhotoInput"
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) {
+                                  setOrderPhoto(f.name);
+                                  setOrderPhotoPreview(URL.createObjectURL(f));
+                                }
+                              }}
+                            />
+                            {orderPhotoPreview ? (
+                              <div className="flex flex-col items-center gap-2">
+                                <img
+                                  src={orderPhotoPreview}
+                                  alt="Aperçu"
+                                  className="w-32 h-32 object-cover rounded-xl shadow"
+                                />
+                                <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                                  {orderPhoto}
+                                </p>
+                              </div>
+                            ) : (
+                              <div className="flex flex-col items-center gap-2">
+                                <Upload className="w-10 h-10 text-[#c97b7b] dark:text-[#e8a0a0]" />
+                                <p className="text-sm text-[#6b5a4a] dark:text-[#a89880]">
+                                  Glissez-déposez une image ici
+                                </p>
+                                <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                                  ou cliquez pour choisir
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Choisissez le mode de récupération ou de livraison
+                          </label>
+                          <div className="flex gap-4">
+                            <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                              <input
+                                type="radio"
+                                className="radio-lg"
+                                name="orderType"
+                                value="recup"
                               checked={orderType === "recup"}
                               onChange={() => setOrderType("recup")}
                             />
@@ -627,6 +711,7 @@ export default function Catalog() {
                             À livrer
                           </label>
                         </div>
+                        </div>
                         <DateTimeInput
                           date={orderDate}
                           time={orderTime}
@@ -636,37 +721,9 @@ export default function Catalog() {
                           timeLabel={orderType === "livraison" ? "Heure de livraison" : "Heure de récupération"}
                         />
 
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Contact <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            value={orderContact}
-                            onChange={(e) => setOrderContact(e.target.value)}
-                            placeholder="Votre contact"
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Avance à payer (Ar)
-                          </label>
-                          <input
-                            value={orderAvance}
-                            onChange={(e) => setOrderAvance(e.target.value)}
-                            placeholder="0"
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          />
-                        </div>
-                        <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20">
-                          Total estimé:{" "}
-                          <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
-                            {formatAriary(cake.prixPortion * orderQty)}
-                          </span>
-                        </div>
                         <button
                           onClick={() => setOrderStep(orderType === "livraison" ? 2 : 3)}
-                          className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
+                          className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition md:col-span-2"
                         >
                           Suivant
                         </button>
@@ -703,7 +760,7 @@ export default function Catalog() {
                     )}
 
                     {orderStep === 3 && (
-                      <div className="mt-5 space-y-4">
+                      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <h4 className="font-display text-lg font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
                           Paiement
                         </h4>
@@ -745,13 +802,35 @@ export default function Catalog() {
                             />
                           </div>
                         </div>
-                        <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20">
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Contact <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            value={orderContact}
+                            onChange={(e) => setOrderContact(e.target.value)}
+                            placeholder="Votre contact"
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                            Avance à payer (Ar)
+                          </label>
+                          <input
+                            value={orderAvance}
+                            onChange={(e) => setOrderAvance(e.target.value)}
+                            placeholder="0"
+                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                          />
+                        </div>
+                        <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 md:col-span-2">
                           Total à payer:{" "}
                           <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
                             {formatAriary(cake.prixPortion * orderQty)}
                           </span>
                         </div>
-                        <div className="flex gap-3">
+                        <div className="flex gap-3 md:col-span-2">
                           <button
                             onClick={() => setOrderStep(orderType === "livraison" ? 2 : 1)}
                             className="flex-1 py-2.5 rounded-full glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold text-sm"
