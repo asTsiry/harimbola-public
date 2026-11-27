@@ -17,7 +17,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Upload,
-  ImageIcon,
 } from "lucide-react";
 import Image from "next/image";
 
@@ -660,13 +659,41 @@ export default function Catalog() {
                               }}
                             />
                             {orderPhotoPreview ? (
-                              <div className="flex flex-col items-center gap-2">
-                                <img
+                              <div className="relative inline-block group/preview">
+                                <Image
                                   src={orderPhotoPreview}
                                   alt="Aperçu"
+                                  width={128}
+                                  height={128}
+                                  unoptimized
                                   className="w-32 h-32 object-cover rounded-xl shadow"
                                 />
-                                <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition rounded-xl">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      document.getElementById("orderPhotoInput")?.click();
+                                    }}
+                                    className="w-9 h-9 rounded-full bg-white/90 text-[#8b5a2b] flex items-center justify-center hover:scale-110 transition"
+                                    aria-label="Remplacer"
+                                  >
+                                    <Upload className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setOrderPhoto(null);
+                                      setOrderPhotoPreview(null);
+                                    }}
+                                    className="w-9 h-9 rounded-full bg-white/90 text-red-500 flex items-center justify-center hover:scale-110 transition"
+                                    aria-label="Supprimer"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1 text-center">
                                   {orderPhoto}
                                 </p>
                               </div>
