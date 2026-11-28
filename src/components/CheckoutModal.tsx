@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Info } from "lucide-react";
+import Image from "next/image";
 import { useCart } from "@/components/CartProvider";
 import { formatAriary } from "@/lib/mockData";
 import dynamic from "next/dynamic";
@@ -142,46 +143,48 @@ export default function CheckoutModal() {
 
               {(step === 2 || !hasDelivery) && (
                 <div className="mt-5 space-y-4">
-                  <h4 className="font-display text-lg font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
-                    Paiement
-                  </h4>
+                  <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                    Payez par mobile money (Airtel Money, MVola, Orange Money) ou carte bancaire. Vous serez redirigé vers Papi pour finaliser le paiement.
+                  </p>
+
                   <div>
                     <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                      Nom sur la carte
+                      Nom complet <span className="text-red-500">*</span>
                     </label>
                     <input
-                      placeholder="Nom complet"
+                      placeholder="Jean Dupont"
                       className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                     />
                   </div>
                   <div>
                     <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                      Numéro de carte
+                      Email
                     </label>
                     <input
-                      placeholder="1234 5678 9012 3456"
+                      type="email"
+                      placeholder="john@example.com"
+                      className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                      Téléphone <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      placeholder="+261 ..."
                       className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                        Expiration
-                      </label>
-                      <input
-                        placeholder="MM/AA"
-                        className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                        CVC
-                      </label>
-                      <input
-                        placeholder="123"
-                        className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                      />
-                    </div>
+                    {["Airtel Money", "MVola", "Orange Money", "Visa"].map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        className="px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] hover:border-[#c97b7b] transition"
+                      >
+                        {m}
+                      </button>
+                    ))}
                   </div>
                   {hasDelivery && distance != null && (
                     <div className="bg-[#f0e0d4] dark:bg-[#050302] rounded-2xl px-4 py-3 flex items-center justify-between">
@@ -204,11 +207,22 @@ export default function CheckoutModal() {
                       {formatAriary(total + (hasDelivery ? deliveryFee : 0))}
                     </span>
                   </div>
+                  <div className="flex items-center justify-center gap-2 text-[10px] text-[#6b5a4a] dark:text-[#a89880]">
+                    Powered by
+                    <Image
+                      src="https://dashboard.papi.mg/images/logos/logo-dark.svg"
+                      alt="Papi"
+                      width={60}
+                      height={16}
+                      unoptimized
+                      className="h-4 w-auto"
+                    />
+                  </div>
                   <button
                     onClick={() => setDone(true)}
                     className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
                   >
-                    Payer
+                    Payez maintenant
                   </button>
                 </div>
               )}
