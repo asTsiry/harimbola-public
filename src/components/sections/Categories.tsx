@@ -99,6 +99,17 @@ export default function Categories() {
                   {cakes.filter((k) => k.categorieId === c.id).length || 1} création
                   {cakes.filter((k) => k.categorieId === c.id).length > 1 ? "s" : ""}
                 </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.dispatchEvent(new CustomEvent("open-order", { detail: { model: c.nom } }));
+                  }}
+                  className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white text-xs font-semibold"
+                >
+                  Commander
+                </button>
               </div>
             </motion.a>
           ))}

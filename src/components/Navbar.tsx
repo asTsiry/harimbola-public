@@ -76,12 +76,12 @@ export default function Navbar() {
                 <Moon className="w-4 h-4" />
               )}
             </button>
-            <a
-              href="#contact"
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("open-order", { detail: { model: "Model Simple" } }))}
               className="ml-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#d4a373] to-[#8b5a2b] text-[#1a120b] font-semibold text-sm hover:shadow-[0_0_24px_rgba(212,163,115,0.5)] transition"
             >
               Commander
-            </a>
+            </button>
           </div>
 
           <button

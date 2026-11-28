@@ -25,6 +25,8 @@ export default function Catalog() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
   const [orderCake, setOrderCake] = useState<number | null>(null);
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [orderModel, setOrderModel] = useState<string>("");
   const [orderStep, setOrderStep] = useState(1);
   const [orderLocation, setOrderLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [orderDistance, setOrderDistance] = useState<number | null>(null);
@@ -75,6 +77,29 @@ export default function Catalog() {
     }, 4000);
     return () => clearInterval(id);
   }, [selected]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { model?: string } | undefined;
+      setOrderCake(null);
+      setOrderOpen(true);
+      setOrderModel(detail?.model || "Model Simple");
+      setOrderPortion(null);
+      setOrderQty(1);
+      setOrderDetails("");
+      setOrderPhoto(null);
+      setOrderPhotoPreview(null);
+      setOrderType("recup");
+      setOrderDate("");
+      setOrderTime("");
+      setOrderStep(1);
+      setOrderLocation(null);
+      setOrderDistance(null);
+      setOrderDone(false);
+    };
+    window.addEventListener("open-order", handler);
+    return () => window.removeEventListener("open-order", handler);
+  }, []);
 
   const goPrev = () => {
     if (filtered.length === 0) return;
@@ -227,6 +252,7 @@ export default function Catalog() {
                   <button
                     onClick={() => {
                       setOrderCake(cake.id);
+                      setOrderModel(cake.titre);
                       setOrderPortion(cake.portions[0] ?? null);
                       setOrderQty(1);
                       setOrderDetails("");
@@ -402,12 +428,20 @@ export default function Catalog() {
                     <button
                       onClick={() => {
                         setOrderCake(selected.id);
+                        setOrderModel(selected.titre);
                         setOrderPortion(selected.portions[0] ?? null);
                         setOrderQty(1);
+                        setOrderDetails("");
+                        setOrderPhoto(null);
+                        setOrderPhotoPreview(null);
+                        setOrderType("recup");
                         setOrderDate("");
-                        setOrderAddr("");
-                        setOrderAvance("");
+                        setOrderTime("");
+                        setOrderStep(1);
+                        setOrderLocation(null);
+                        setOrderDistance(null);
                         setOrderDone(false);
+                        setSelectedId(null);
                       }}
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
                     >
@@ -521,7 +555,7 @@ export default function Catalog() {
 
       {/* Order modal */}
       <AnimatePresence>
-        {orderCake != null && (
+        {(orderCake != null || orderOpen) && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -537,15 +571,19 @@ export default function Catalog() {
               className="relative w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-3xl bg-white dark:bg-[#0a0604] shadow-2xl p-6"
             >
               <button
-                onClick={() => setOrderCake(null)}
+                onClick={() => {
+                  setOrderCake(null);
+                  setOrderOpen(false);
+                }}
                 className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
               >
                 <X className="w-5 h-5" />
               </button>
 
               {(() => {
-                const cake = cakes.find((c) => c.id === orderCake);
-                if (!cake) return null;
+                const cake = orderCake ? cakes.find((c) => c.id === orderCake) : null;
+                const portions = cake?.portions?.length ? cake.portions : [1, 4, 6, 8, 10, 12, 14, 20, 30];
+                const price = cake?.prixPortion ?? 4000;
                 if (orderDone) {
                   return (
                     <div className="text-center py-10">
@@ -559,7 +597,10 @@ export default function Catalog() {
                         Nous vous contacterons pour confirmer la livraison.
                       </p>
                       <button
-                        onClick={() => setOrderCake(null)}
+                        onClick={() => {
+                          setOrderCake(null);
+                          setOrderOpen(false);
+                        }}
                         className="mt-6 px-6 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm"
                       >
                         Fermer
@@ -571,18 +612,25 @@ export default function Catalog() {
                   <>
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
-                        Commander — {cake.titre}
+                        {orderStep === 1
+                          ? "Détail de la commande"
+                          : orderStep === 2
+                          ? "Lieu de livraison"
+                          : "Paiement"}
                       </h3>
                       <span className="text-xs text-[#6b5a4a] dark:text-[#a89880] mr-12">
                         Étape {orderStep} {orderType === "livraison" ? "/ 3" : "/ 2"}
                       </span>
                     </div>
                     <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
-                      {formatAriary(cake.prixPortion)} / portion
+                      {formatAriary(price)} / portion
                     </p>
 
                     {orderStep === 1 && (
                       <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="md:col-span-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                          Modèle: <span className="font-semibold">{orderModel || "Sur mesure"}</span>
+                        </div>
                         <div>
                           <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
                             Portion
@@ -592,7 +640,7 @@ export default function Catalog() {
                             onChange={(e) => setOrderPortion(Number(e.target.value))}
                             className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                           >
-                            {cake.portions.map((p) => (
+                            {portions.map((p) => (
                               <option key={p} value={p}>
                                 {p} personnes
                               </option>
@@ -865,7 +913,7 @@ export default function Catalog() {
                         <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 md:col-span-2">
                           Total à payer:{" "}
                           <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
-                            {formatAriary(cake.prixPortion * orderQty)}
+                            {formatAriary(price * orderQty)}
                           </span>
                         </div>
                         <div className="flex gap-3 md:col-span-2">
