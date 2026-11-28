@@ -44,10 +44,11 @@ function ShopMarker({ position }: { position: [number, number] }) {
   return <Marker position={position} icon={divIcon} />;
 }
 
-function ClickHandler({ onChange }: { onChange: (lat: number, lng: number) => void }) {
+function ClickHandler({ onChange, onFly }: { onChange: (lat: number, lng: number) => void; onFly: (lat: number, lng: number) => void }) {
   useMapEvents({
     click(e) {
       onChange(e.latlng.lat, e.latlng.lng);
+      onFly(e.latlng.lat, e.latlng.lng);
     },
   });
   return null;
@@ -78,7 +79,6 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
   }, []);
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const locatedRef = useRef(false);
-  const [distance, setDistance] = useState<number | null>(null);
   const [distLoading, setDistLoading] = useState(false);
   const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
   const [addrDetails, setAddrDetails] = useState<Record<string, string>>({});
@@ -88,7 +88,6 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
       const t = setTimeout(() => {
         setRouteCoords([]);
         setAddrDetails({});
-        setDistance(null);
         onDistanceChange?.(null);
       }, 0);
       return () => clearTimeout(t);
@@ -105,7 +104,6 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
         if (cancelled) return;
         const d = data?.routes?.[0]?.distance;
         const km = d ? d / 1000 : null;
-        setDistance(km);
         onDistanceChange?.(km);
         const coords = data?.routes?.[0]?.geometry?.coordinates;
         if (coords) {
@@ -129,10 +127,10 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
           if (addr) onAddressChange(addr);
         } catch {
           setAddrDetails({});
+          onDistanceChange?.(null);
         }
       } catch {
         if (cancelled) return;
-        setDistance(null);
         onDistanceChange?.(null);
         setRouteCoords([]);
       } finally {
@@ -270,7 +268,7 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
               maxNativeZoom={19}
             />
           )}
-          <ClickHandler onChange={(lat, lng) => onChange({ lat, lng })} />
+          <ClickHandler onChange={(lat, lng) => onChange({ lat, lng })} onFly={(lat, lng) => setFlyTarget([lat, lng])} />
           <ShopMarker position={shop} />
         {value && (
           <Marker
@@ -322,15 +320,7 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
           ))}
         </div>
       )}
-      {value && (
-        <p className="text-sm font-semibold text-[#8b5a2b] dark:text-[#d4a373]">
-          {distLoading
-            ? "Calcul de la distance..."
-            : distance != null
-            ? `Distance (route): ${distance.toFixed(2)} km`
-            : "Distance indisponible"}
-        </p>
-      )}
+
 
     </div>
   );

@@ -16,6 +16,14 @@ export default function CheckoutModal() {
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [done, setDone] = useState(false);
   const [orderType, setOrderType] = useState<"recup" | "livraison">("recup");
+  const [searchAddr, setSearchAddr] = useState("");
+  const [distance, setDistance] = useState<number | null>(null);
+
+  const deliveryFee = distance == null
+    ? 0
+    : distance <= 10
+    ? 10000
+    : 10000 + Math.ceil(distance - 10) * 1000;
 
   const hasDelivery = orderType === "livraison";
 
@@ -83,9 +91,6 @@ export default function CheckoutModal() {
                   ? "Lieu de livraison"
                   : "Paiement"}
               </h3>
-              <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1">
-                Total: {formatAriary(total)}
-              </p>
 
               {step === 1 && hasDelivery && (
                 <div className="mt-5 space-y-4">
@@ -98,10 +103,15 @@ export default function CheckoutModal() {
                   <LocationPicker
                     value={location}
                     onChange={setLocation}
-                    address=""
-                    onAddressChange={() => {}}
-                    onDistanceChange={() => {}}
+                    address={searchAddr}
+                    onAddressChange={setSearchAddr}
+                    onDistanceChange={setDistance}
                   />
+                  {hasDelivery && distance != null && (
+                    <p className="text-sm font-semibold text-[#8b5a2b] dark:text-[#d4a373]">
+                      Frais de livraison estimés: {formatAriary(deliveryFee)}
+                    </p>
+                  )}
                   <div className="flex gap-3">
                     <button
                       onClick={() => setOpen(false)}
@@ -162,6 +172,20 @@ export default function CheckoutModal() {
                         className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                       />
                     </div>
+                  </div>
+                  {hasDelivery && distance != null && (
+                    <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] flex justify-between">
+                      <span>Frais de livraison</span>
+                      <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                        {formatAriary(deliveryFee)}
+                      </span>
+                    </div>
+                  )}
+                  <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 flex justify-between">
+                    <span>Total à payer</span>
+                    <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                      {formatAriary(total + (hasDelivery ? deliveryFee : 0))}
+                    </span>
                   </div>
                   <button
                     onClick={() => setDone(true)}
