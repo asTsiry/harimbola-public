@@ -97,7 +97,7 @@ export default function CheckoutModal() {
                   <div className="flex items-start gap-2">
                     <Info className="shrink-0 w-7 h-7 text-[#c97b7b] dark:text-[#e8a0a0]" />
                     <p className="text-xs italic text-[#6b5a4a] dark:text-[#a89880]">
-                      Nous avons tenté de récupérer votre position. Veuillez ajuster le point exact sur la carte, puis confirmer le lieu de livraison.
+                      Nous avons tenté de récupérer votre position. Veuillez ajuster le point exact sur la carte, ou rechercher un autre lieu, puis confirmer le lieu de livraison.
                     </p>
                   </div>
                   <LocationPicker
