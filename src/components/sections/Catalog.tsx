@@ -2,10 +2,11 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo, useEffect } from "react";
-import { cakes, categories, formatAriary, imgFor } from "@/lib/mockData";
+import { cakes, categories, formatAriary, imgFor, portions as allPortions } from "@/lib/mockData";
+import { useCart, CartItem } from "@/components/CartProvider";
 import dynamic from "next/dynamic";
-const DateTimeInput = dynamic(() => import("@/components/DateTimeInput"), { ssr: false });
-const LocationPicker = dynamic(() => import("@/components/LocationPicker"), { ssr: false });
+const Dropdown = dynamic(() => import("@/components/Dropdown"), { ssr: false });
+
 import {
   Heart,
   Frown,
@@ -21,15 +22,14 @@ import {
 import Image from "next/image";
 
 export default function Catalog() {
+  const { addItem } = useCart();
   const [filter, setFilter] = useState<number | "all">("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
   const [orderCake, setOrderCake] = useState<number | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
   const [orderModel, setOrderModel] = useState<string>("");
-  const [orderStep, setOrderStep] = useState(1);
-  const [orderLocation, setOrderLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [orderDistance, setOrderDistance] = useState<number | null>(null);
+
   const [orderPortion, setOrderPortion] = useState<number | null>(null);
   const [orderQty, setOrderQty] = useState(1);
   const [orderDetails, setOrderDetails] = useState("");
@@ -38,7 +38,7 @@ export default function Catalog() {
   const [orderType, setOrderType] = useState<"recup" | "livraison">("recup");
   const [orderDate, setOrderDate] = useState("");
   const [orderTime, setOrderTime] = useState("");
-  const [orderAddr, setOrderAddr] = useState("");
+
   const [orderContact, setOrderContact] = useState("");
   const [orderAvance, setOrderAvance] = useState("");
   const [orderDone, setOrderDone] = useState(false);
@@ -92,9 +92,6 @@ export default function Catalog() {
       setOrderType("recup");
       setOrderDate("");
       setOrderTime("");
-      setOrderStep(1);
-      setOrderLocation(null);
-      setOrderDistance(null);
       setOrderDone(false);
     };
     window.addEventListener("open-order", handler);
@@ -261,10 +258,6 @@ export default function Catalog() {
                       setOrderType("recup");
                       setOrderDate("");
                       setOrderTime("");
-                      setOrderStep(1);
-                      setOrderLocation(null);
-                      setOrderDistance(null);
-                      setOrderAddr("");
                       setOrderContact("");
                       setOrderAvance("");
                       setOrderDone(false);
@@ -437,9 +430,6 @@ export default function Catalog() {
                         setOrderType("recup");
                         setOrderDate("");
                         setOrderTime("");
-                        setOrderStep(1);
-                        setOrderLocation(null);
-                        setOrderDistance(null);
                         setOrderDone(false);
                         setSelectedId(null);
                       }}
@@ -582,7 +572,7 @@ export default function Catalog() {
 
               {(() => {
                 const cake = orderCake ? cakes.find((c) => c.id === orderCake) : null;
-                const portions = cake?.portions?.length ? cake.portions : [1, 4, 6, 8, 10, 12, 14, 20, 30];
+
                 const price = cake?.prixPortion ?? 4000;
                 if (orderDone) {
                   return (
@@ -610,337 +600,176 @@ export default function Catalog() {
                 }
                 return (
                   <>
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
-                        {orderStep === 1
-                          ? "Détail de la commande"
-                          : orderStep === 2
-                          ? "Lieu de livraison"
-                          : "Paiement"}
-                      </h3>
-                      <span className="text-xs text-[#6b5a4a] dark:text-[#a89880] mr-12">
-                        Étape {orderStep} {orderType === "livraison" ? "/ 3" : "/ 2"}
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                    <h3 className="font-display text-xl font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
+                      Détail de la commande
+                    </h3>
+                    <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1">
                       {formatAriary(price)} / portion
                     </p>
 
-                    {orderStep === 1 && (
-                      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
-                          Modèle: <span className="font-semibold">{orderModel || "Sur mesure"}</span>
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Portion <span className="text-red-500">*</span>
-                          </label>
-                          <select
-                            required
-                            value={orderPortion ?? ""}
-                            onChange={(e) => setOrderPortion(Number(e.target.value))}
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          >
-                            {portions.map((p) => (
-                              <option key={p} value={p}>
-                                {p} personnes
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Quantité <span className="text-red-500">*</span>
-                          </label>
+                    <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="md:col-span-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                        Modèle: <span className="font-semibold">{orderModel || "Model Simple"}</span>
+                      </div>
+                      <Dropdown
+                        label="Portion"
+                        required
+                        placeholder="Choisir une portion"
+                        value={orderPortion}
+                        onChange={(v) => setOrderPortion(Number(v))}
+                        options={(cake?.portions?.length ? cake.portions : allPortions.map((p) => p.nb))
+                          .filter((p) => p >= 4)
+                          .map((p) => ({ value: p, label: `${p} personnes` }))}
+                      />
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Quantité <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          value={orderQty}
+                          onChange={(e) => setOrderQty(Math.max(1, Number(e.target.value)))}
+                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Détails (couleur, texte, etc.)
+                        </label>
+                        <textarea
+                          value={orderDetails}
+                          onChange={(e) => setOrderDetails(e.target.value)}
+                          rows={3}
+                          placeholder="Précisez vos souhaits..."
+                          className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b] resize-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                          Photo modèle (optionnel)
+                        </label>
+                        <div
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            e.currentTarget.classList.add("border-[#c97b7b]", "bg-[#e8a0a0]/10");
+                          }}
+                          onDragLeave={(e) => {
+                            e.currentTarget.classList.remove("border-[#c97b7b]", "bg-[#e8a0a0]/10");
+                          }}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            e.currentTarget.classList.remove("border-[#c97b7b]", "bg-[#e8a0a0]/10");
+                            const f = e.dataTransfer.files?.[0];
+                            if (f) {
+                              setOrderPhoto(f.name);
+                              setOrderPhotoPreview(URL.createObjectURL(f));
+                            }
+                          }}
+                          onClick={() => document.getElementById("orderPhotoInput")?.click()}
+                          className="border-2 border-dashed border-[#e8a0a0]/40 rounded-2xl p-6 text-center cursor-pointer hover:border-[#c97b7b] transition group/preview"
+                        >
                           <input
-                            type="number"
-                            required
-                            min={1}
-                            value={orderQty}
-                            onChange={(e) => setOrderQty(Math.max(1, Number(e.target.value)))}
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Détails (couleur, texte, etc.)
-                          </label>
-                          <textarea
-                            value={orderDetails}
-                            onChange={(e) => setOrderDetails(e.target.value)}
-                            rows={3}
-                            placeholder="Précisez vos souhaits..."
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b] resize-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Photo modèle (optionnel)
-                          </label>
-                          <div
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.currentTarget.classList.add("border-[#c97b7b]", "bg-[#e8a0a0]/10");
-                            }}
-                            onDragLeave={(e) => {
-                              e.currentTarget.classList.remove("border-[#c97b7b]", "bg-[#e8a0a0]/10");
-                            }}
-                            onDrop={(e) => {
-                              e.preventDefault();
-                              e.currentTarget.classList.remove("border-[#c97b7b]", "bg-[#e8a0a0]/10");
-                              const f = e.dataTransfer.files?.[0];
+                            id="orderPhotoInput"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const f = e.target.files?.[0];
                               if (f) {
                                 setOrderPhoto(f.name);
                                 setOrderPhotoPreview(URL.createObjectURL(f));
                               }
                             }}
-                            onClick={() => document.getElementById("orderPhotoInput")?.click()}
-                            className="border-2 border-dashed border-[#e8a0a0]/40 rounded-2xl p-6 text-center cursor-pointer hover:border-[#c97b7b] transition"
-                          >
-                            <input
-                              id="orderPhotoInput"
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={(e) => {
-                                const f = e.target.files?.[0];
-                                if (f) {
-                                  setOrderPhoto(f.name);
-                                  setOrderPhotoPreview(URL.createObjectURL(f));
-                                }
-                              }}
-                            />
-                            {orderPhotoPreview ? (
-                              <div className="relative inline-block group/preview">
-                                <Image
-                                  src={orderPhotoPreview}
-                                  alt="Aperçu"
-                                  width={128}
-                                  height={128}
-                                  unoptimized
-                                  className="w-32 h-32 object-cover rounded-xl shadow"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition rounded-xl">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      document.getElementById("orderPhotoInput")?.click();
-                                    }}
-                                    className="w-9 h-9 rounded-full bg-white/90 text-[#8b5a2b] flex items-center justify-center hover:scale-110 transition"
-                                    aria-label="Remplacer"
-                                  >
-                                    <Upload className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setOrderPhoto(null);
-                                      setOrderPhotoPreview(null);
-                                    }}
-                                    className="w-9 h-9 rounded-full bg-white/90 text-red-500 flex items-center justify-center hover:scale-110 transition"
-                                    aria-label="Supprimer"
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </button>
-                                </div>
-                                <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1 text-center">
-                                  {orderPhoto}
-                                </p>
+                          />
+                          {orderPhotoPreview ? (
+                            <div className="relative inline-block">
+                              <Image
+                                src={orderPhotoPreview}
+                                alt="Aperçu"
+                                width={128}
+                                height={128}
+                                unoptimized
+                                className="w-32 h-32 object-cover rounded-xl shadow"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 group-hover/preview:opacity-100 transition rounded-xl">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    document.getElementById("orderPhotoInput")?.click();
+                                  }}
+                                  className="w-9 h-9 rounded-full bg-white/90 text-[#8b5a2b] flex items-center justify-center hover:scale-110 transition"
+                                  aria-label="Remplacer"
+                                >
+                                  <Upload className="w-4 h-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOrderPhoto(null);
+                                    setOrderPhotoPreview(null);
+                                  }}
+                                  className="w-9 h-9 rounded-full bg-white/90 text-red-500 flex items-center justify-center hover:scale-110 transition"
+                                  aria-label="Supprimer"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
                               </div>
-                            ) : (
-                              <div className="flex flex-col items-center gap-2">
-                                <Upload className="w-10 h-10 text-[#c97b7b] dark:text-[#e8a0a0]" />
-                                <p className="text-sm text-[#6b5a4a] dark:text-[#a89880]">
-                                  Glissez-déposez une image ici
-                                </p>
-                                <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
-                                  ou cliquez pour choisir
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Choisissez le mode de récupération ou de livraison
-                          </label>
-                          <div className="flex gap-4">
-                            <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
-                              <input
-                                type="radio"
-                                className="radio-lg"
-                                name="orderType"
-                                value="recup"
-                              checked={orderType === "recup"}
-                              onChange={() => setOrderType("recup")}
-                            />
-                            À récupérer
-                          </label>
-                          <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
-                            <input
-                              type="radio"
-                              className="radio-lg"
-                              name="orderType"
-                              value="livraison"
-                              checked={orderType === "livraison"}
-                              onChange={() => setOrderType("livraison")}
-                            />
-                            À livrer
-                          </label>
-                        </div>
-                        </div>
-                        <DateTimeInput
-                          date={orderDate}
-                          time={orderTime}
-                          onDateChange={setOrderDate}
-                          onTimeChange={setOrderTime}
-                          dateLabel={orderType === "livraison" ? "Date de livraison" : "Date de récupération"}
-                          timeLabel={orderType === "livraison" ? "Heure de livraison" : "Heure de récupération"}
-                          required
-                        />
-
-                        <button
-                          onClick={() => setOrderStep(orderType === "livraison" ? 2 : 3)}
-                          className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition md:col-span-2"
-                        >
-                          Suivant
-                        </button>
-                      </div>
-                    )}
-
-                    {orderStep === 2 && orderType === "livraison" && (
-                      <div className="mt-5 space-y-4">
-                        <div className="flex items-start gap-2">
-                          <span className="shrink-0 w-4 h-4 rounded-full bg-[#e8a0a0]/20 text-[#c97b7b] dark:text-[#e8a0a0] flex items-center justify-center text-[10px] font-bold italic">
-                            i
-                          </span>
-                          <p className="text-xs italic text-[#6b5a4a] dark:text-[#a89880]">
-                            Nous avons tenté de récupérer votre position. Vous pouvez ajuster le point exact sur la carte, puis cliquer sur Suivant pour confirmer.
-                          </p>
-                        </div>
-                        <LocationPicker
-                          value={orderLocation}
-                          onChange={setOrderLocation}
-                          address={orderAddr}
-                          onAddressChange={setOrderAddr}
-                          onDistanceChange={setOrderDistance}
-                        />
-                        <div className="flex gap-3">
-                          <button
-                            onClick={() => setOrderStep(1)}
-                            className="flex-1 py-2.5 rounded-full glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold text-sm"
-                          >
-                            Retour
-                          </button>
-                          <button
-                            onClick={() => setOrderStep(3)}
-                            disabled={!orderLocation}
-                            className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm disabled:opacity-50"
-                          >
-                            Confirmer le lieu de livraison
-                          </button>
+                              <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1 text-center">
+                                {orderPhoto}
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center gap-2">
+                              <Upload className="w-10 h-10 text-[#c97b7b] dark:text-[#e8a0a0]" />
+                              <p className="text-sm text-[#6b5a4a] dark:text-[#a89880]">
+                                Glissez-déposez une image ici
+                              </p>
+                              <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                                ou cliquez pour choisir
+                              </p>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
 
-                    {orderStep === 3 && (
-                      <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <h4 className="font-display text-lg font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
-                          Paiement
-                        </h4>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Nom sur la carte
-                          </label>
-                          <input
-                            placeholder="Nom complet"
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Numéro de carte
-                          </label>
-                          <input
-                            placeholder="1234 5678 9012 3456"
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                              Expiration
-                            </label>
-                            <input
-                              placeholder="MM/AA"
-                              className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                              CVC
-                            </label>
-                            <input
-                              placeholder="123"
-                              className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Contact <span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            required
-                            value={orderContact}
-                            onChange={(e) => setOrderContact(e.target.value)}
-                            placeholder="Votre contact"
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Avance à payer (Ar)
-                          </label>
-                          <input
-                            value={orderAvance}
-                            onChange={(e) => setOrderAvance(e.target.value)}
-                            placeholder="0"
-                            className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
-                          />
-                        </div>
-                        {orderDistance != null && (
-                          <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] md:col-span-2">
-                            Distance (route):{" "}
-                            <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
-                              {orderDistance.toFixed(2)} km
-                            </span>
-                          </div>
-                        )}
-                        <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 md:col-span-2">
-                          Total à payer:{" "}
-                          <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
-                            {formatAriary(price * orderQty)}
-                          </span>
-                        </div>
-                        <div className="flex gap-3 md:col-span-2">
-                          <button
-                            onClick={() => setOrderStep(orderType === "livraison" ? 2 : 1)}
-                            className="flex-1 py-2.5 rounded-full glass text-[#8b5a2b] dark:text-[#d4a373] font-semibold text-sm"
-                          >
-                            Retour
-                          </button>
-                          <button
-                            onClick={() => setOrderDone(true)}
-                            className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition"
-                          >
-                            Payer
-                          </button>
-                        </div>
+                      <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 md:col-span-2">
+                        Total estimé:{" "}
+                        <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                          {formatAriary(price * (orderPortion || 1) * orderQty)}
+                        </span>
                       </div>
-                    )}
+                      <button
+                        onClick={() => {
+                          const item: CartItem = {
+                            id: Date.now(),
+                            titre: orderModel || "Model Simple",
+                            photo: cake?.photos?.[0] ?? "montagne.jpg",
+                            prix: price,
+                            qty: orderQty,
+                            portion: orderPortion,
+                            details: orderDetails,
+                            photoPreview: orderPhotoPreview,
+                            type: orderType,
+                            date: orderDate,
+                            time: orderTime,
+                            contact: orderContact,
+                            avance: orderAvance,
+                            address: "",
+                            location: null,
+                          };
+                          addItem(item);
+                          setOrderCake(null);
+                          setOrderOpen(false);
+                        }}
+                        className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition md:col-span-2"
+                      >
+                        Ajouter au panier
+                      </button>
+                  </div>
                   </>
                 );
               })()}

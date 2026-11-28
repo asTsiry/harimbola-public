@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Moon, Sun } from "lucide-react";
+import { Menu, X, Phone, Moon, Sun, ShoppingCart } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useCart } from "@/components/CartProvider";
 
 const links = [
   { href: "#accueil", label: "Accueil" },
@@ -17,6 +18,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { count } = useCart();
   const [mounted, setMounted] = useState(false);
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
@@ -65,6 +67,18 @@ export default function Navbar() {
                 <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#d4a373] group-hover:w-full transition-all duration-300" />
               </a>
             ))}
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-cart"))}
+              className="relative p-2 rounded-full glass text-[#8b5a2b] dark:text-[#d4a373] hover:scale-110 transition"
+              aria-label="Panier"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              {mounted && count > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white text-[9px] font-bold flex items-center justify-center">
+                  {count}
+                </span>
+              )}
+            </button>
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2 rounded-full glass text-[#8b5a2b] dark:text-[#d4a373] hover:scale-110 transition"

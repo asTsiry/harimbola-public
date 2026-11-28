@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import { CartProvider } from "@/components/CartProvider";
+import CartDrawer from "@/components/CartDrawer";
+import CheckoutModal from "@/components/CheckoutModal";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -29,7 +32,13 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${playfair.variable} ${inter.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-[#f0e0d4] text-[#2a1d13] dark:bg-[#0a0604] dark:text-[#f5e9d3]" suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <Providers>
+          <CartProvider>
+            {children}
+            <CartDrawer />
+            <CheckoutModal />
+          </CartProvider>
+        </Providers>
       </body>
     </html>
   );
