@@ -108,9 +108,19 @@ export default function CheckoutModal() {
                     onDistanceChange={setDistance}
                   />
                   {hasDelivery && distance != null && (
-                    <p className="text-sm font-semibold text-[#8b5a2b] dark:text-[#d4a373]">
-                      Frais de livraison estimés: {formatAriary(deliveryFee)}
-                    </p>
+                    <div className="bg-[#f0e0d4] dark:bg-[#050302] rounded-2xl px-4 py-3 flex items-center justify-between">
+                      <div>
+                        <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                          Frais de livraison estimés
+                        </div>
+                        <div className="text-[10px] text-[#6b5a4a] dark:text-[#a89880]">
+                          Distance depuis notre boutique: ~{distance.toFixed(2)} km
+                        </div>
+                      </div>
+                      <div className="font-display text-lg font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                        {formatAriary(deliveryFee)}
+                      </div>
+                    </div>
                   )}
                   <div className="flex gap-3">
                     <button
@@ -174,11 +184,18 @@ export default function CheckoutModal() {
                     </div>
                   </div>
                   {hasDelivery && distance != null && (
-                    <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] flex justify-between">
-                      <span>Frais de livraison</span>
-                      <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                    <div className="bg-[#f0e0d4] dark:bg-[#050302] rounded-2xl px-4 py-3 flex items-center justify-between">
+                      <div>
+                        <div className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
+                          Frais de livraison
+                        </div>
+                        <div className="text-[10px] text-[#6b5a4a] dark:text-[#a89880]">
+                          Distance depuis notre boutique: ~{distance.toFixed(2)} km
+                        </div>
+                      </div>
+                      <div className="font-display text-lg font-bold text-[#8b5a2b] dark:text-[#d4a373]">
                         {formatAriary(deliveryFee)}
-                      </span>
+                      </div>
                     </div>
                   )}
                   <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 flex justify-between">

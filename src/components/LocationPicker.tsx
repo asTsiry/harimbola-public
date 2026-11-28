@@ -200,6 +200,7 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
         const lat = parseFloat(data[0].lat);
         const lon = parseFloat(data[0].lon);
         setFlyTarget([lat, lon]);
+        onChange({ lat, lng: lon });
       }
     } catch {
       // ignore
