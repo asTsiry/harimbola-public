@@ -22,13 +22,16 @@ import {
 import Image from "next/image";
 
 export default function Catalog() {
-  const { addItem } = useCart();
+  const { addItem, updateItem, removeItem } = useCart();
   const [filter, setFilter] = useState<number | "all">("all");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [imgIdx, setImgIdx] = useState(0);
   const [orderCake, setOrderCake] = useState<number | null>(null);
   const [orderOpen, setOrderOpen] = useState(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
   const [orderModel, setOrderModel] = useState<string>("");
+  const [orderPrix, setOrderPrix] = useState<number>(4000);
 
   const [orderPortion, setOrderPortion] = useState<number | null>(null);
   const [orderQty, setOrderQty] = useState(1);
@@ -84,6 +87,7 @@ export default function Catalog() {
       setOrderCake(null);
       setOrderOpen(true);
       setOrderModel(detail?.model || "Model Simple");
+      setOrderPrix(4000);
       setOrderPortion(null);
       setOrderQty(1);
       setOrderDetails("");
@@ -97,6 +101,30 @@ export default function Catalog() {
     window.addEventListener("open-order", handler);
     return () => window.removeEventListener("open-order", handler);
   }, []);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { item: CartItem; index: number };
+      const it = detail.item;
+      setOrderCake(null);
+      setOrderOpen(true);
+      setEditingIndex(detail.index);
+      setOrderModel(it.titre);
+      setOrderPrix(it.prix);
+      setOrderPortion(it.portion);
+      setOrderQty(it.qty);
+      setOrderDetails(it.details);
+      setOrderPhoto(it.photoPreview ? it.photo : null);
+      setOrderPhotoPreview(it.photoPreview);
+      setOrderType(it.type);
+      setOrderDate(it.date);
+      setOrderTime(it.time);
+      setOrderContact(it.contact);
+      setOrderAvance(it.avance);
+    };
+    window.addEventListener("edit-cart-item", handler);
+    return () => window.removeEventListener("edit-cart-item", handler);
+  }, [removeItem]);
 
   const goPrev = () => {
     if (filtered.length === 0) return;
@@ -250,6 +278,7 @@ export default function Catalog() {
                     onClick={() => {
                       setOrderCake(cake.id);
                       setOrderModel(cake.titre);
+                      setOrderPrix(cake.prixPortion);
                       setOrderPortion(cake.portions[0] ?? null);
                       setOrderQty(1);
                       setOrderDetails("");
@@ -422,6 +451,7 @@ export default function Catalog() {
                       onClick={() => {
                         setOrderCake(selected.id);
                         setOrderModel(selected.titre);
+                        setOrderPrix(selected.prixPortion);
                         setOrderPortion(selected.portions[0] ?? null);
                         setOrderQty(1);
                         setOrderDetails("");
@@ -562,8 +592,12 @@ export default function Catalog() {
             >
               <button
                 onClick={() => {
-                  setOrderCake(null);
-                  setOrderOpen(false);
+                  if (editingIndex != null) {
+                    setConfirmDiscard(true);
+                  } else {
+                    setOrderCake(null);
+                    setOrderOpen(false);
+                  }
                 }}
                 className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 text-white flex items-center justify-center hover:bg-black/60 transition"
               >
@@ -573,7 +607,6 @@ export default function Catalog() {
               {(() => {
                 const cake = orderCake ? cakes.find((c) => c.id === orderCake) : null;
 
-                const price = cake?.prixPortion ?? 4000;
                 if (orderDone) {
                   return (
                     <div className="text-center py-10">
@@ -604,7 +637,7 @@ export default function Catalog() {
                       Détail de la commande
                     </h3>
                     <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] mt-1">
-                      {formatAriary(price)} / portion
+                      {formatAriary(orderPrix)} / portion
                     </p>
 
                     <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -739,7 +772,7 @@ export default function Catalog() {
                       <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 md:col-span-2">
                         Total estimé:{" "}
                         <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
-                          {formatAriary(price * (orderPortion || 1) * orderQty)}
+                          {formatAriary(orderPrix * (orderPortion || 1) * orderQty)}
                         </span>
                       </div>
                       <button
@@ -748,9 +781,10 @@ export default function Catalog() {
                             id: Date.now(),
                             titre: orderModel || "Model Simple",
                             photo: cake?.photos?.[0] ?? "montagne.jpg",
-                            prix: price,
+                            prix: orderPrix,
                             qty: orderQty,
                             portion: orderPortion,
+                            total: orderPrix * (orderPortion || 1) * orderQty,
                             details: orderDetails,
                             photoPreview: orderPhotoPreview,
                             type: orderType,
@@ -761,18 +795,94 @@ export default function Catalog() {
                             address: "",
                             location: null,
                           };
-                          addItem(item);
+                          if (editingIndex != null) {
+                            updateItem(editingIndex, item);
+                          } else {
+                            addItem(item);
+                          }
                           setOrderCake(null);
                           setOrderOpen(false);
+                          setEditingIndex(null);
                         }}
                         className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition md:col-span-2"
                       >
-                        Ajouter au panier
+                        {editingIndex != null ? "Sauvegarder" : "Ajouter au panier"}
                       </button>
                   </div>
                   </>
                 );
               })()}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Discard confirm */}
+      <AnimatePresence>
+        {confirmDiscard && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-sm rounded-3xl bg-white dark:bg-[#0a0604] p-6 shadow-2xl"
+            >
+              <h3 className="font-display text-lg font-bold text-[#2a1d13] dark:text-[#f5e9d3]">
+                Enregistrer les modifications ?
+              </h3>
+              <p className="text-sm text-[#6b5a4a] dark:text-[#a89880] mt-2">
+                Voulez-vous sauvegarder vos modifications ou les annuler ?
+              </p>
+              <div className="mt-5 flex gap-3">
+                <button
+                  onClick={() => {
+                    setConfirmDiscard(false);
+                    setOrderCake(null);
+                    setOrderOpen(false);
+                    setEditingIndex(null);
+                  }}
+                  className="flex-1 py-2.5 rounded-full glass text-[#6b5a4a] dark:text-[#a89880] font-semibold text-sm"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => {
+                    setConfirmDiscard(false);
+                    // save then close
+                    const cake = orderCake ? cakes.find((c) => c.id === orderCake) : null;
+                    const item: CartItem = {
+                      id: Date.now(),
+                      titre: orderModel || "Model Simple",
+                      photo: cake?.photos?.[0] ?? "montagne.jpg",
+                      prix: orderPrix,
+                      qty: orderQty,
+                      portion: orderPortion,
+                      total: orderPrix * (orderPortion || 1) * orderQty,
+                      details: orderDetails,
+                      photoPreview: orderPhotoPreview,
+                      type: "recup",
+                      date: orderDate,
+                      time: orderTime,
+                      contact: orderContact,
+                      avance: orderAvance,
+                      address: "",
+                      location: null,
+                    };
+                    if (editingIndex != null) updateItem(editingIndex, item);
+                    setOrderCake(null);
+                    setOrderOpen(false);
+                    setEditingIndex(null);
+                  }}
+                  className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm"
+                >
+                  Sauvegarder
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}

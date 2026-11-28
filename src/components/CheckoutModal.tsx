@@ -10,20 +10,23 @@ import dynamic from "next/dynamic";
 const LocationPicker = dynamic(() => import("@/components/LocationPicker"), { ssr: false });
 
 export default function CheckoutModal() {
-  const { items, clear, total } = useCart();
+  const { clear, total } = useCart();
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(1);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [done, setDone] = useState(false);
+  const [orderType, setOrderType] = useState<"recup" | "livraison">("recup");
 
-  const hasDelivery = items.some((i) => i.type === "livraison");
+  const hasDelivery = orderType === "livraison";
 
   useEffect(() => {
-    const handler = () => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { type?: "recup" | "livraison"; date?: string; time?: string } | undefined;
       setOpen(true);
       setStep(1);
       setLocation(null);
       setDone(false);
+      setOrderType(detail?.type || "recup");
     };
     window.addEventListener("open-checkout", handler);
     return () => window.removeEventListener("open-checkout", handler);
