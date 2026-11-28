@@ -110,6 +110,8 @@ export default function CartDrawer() {
                     {formatAriary(total)}
                   </span>
                 </div>
+                <div className="border-t border-[#e8a0a0]/20" />
+                <div className="py-5 space-y-4">
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
                     <input
@@ -143,6 +145,7 @@ export default function CartDrawer() {
                   timeLabel={orderType === "livraison" ? "Heure de livraison" : "Heure de récupération"}
                   required
                 />
+                </div>
                 <button
                   onClick={() => {
                     setOpen(false);
