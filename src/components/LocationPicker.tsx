@@ -319,9 +319,7 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
             : "Distance indisponible"}
         </p>
       )}
-      <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] italic">
-        Cliquez sur la carte pour confirmer votre position.
-      </p>
+
     </div>
   );
 }

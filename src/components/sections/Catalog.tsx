@@ -633,9 +633,10 @@ export default function Catalog() {
                         </div>
                         <div>
                           <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Portion
+                            Portion <span className="text-red-500">*</span>
                           </label>
                           <select
+                            required
                             value={orderPortion ?? ""}
                             onChange={(e) => setOrderPortion(Number(e.target.value))}
                             className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
@@ -649,10 +650,11 @@ export default function Catalog() {
                         </div>
                         <div>
                           <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
-                            Quantité
+                            Quantité <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="number"
+                            required
                             min={1}
                             value={orderQty}
                             onChange={(e) => setOrderQty(Math.max(1, Number(e.target.value)))}
@@ -796,6 +798,7 @@ export default function Catalog() {
                           onTimeChange={setOrderTime}
                           dateLabel={orderType === "livraison" ? "Date de livraison" : "Date de récupération"}
                           timeLabel={orderType === "livraison" ? "Heure de livraison" : "Heure de récupération"}
+                          required
                         />
 
                         <button
@@ -809,9 +812,14 @@ export default function Catalog() {
 
                     {orderStep === 2 && orderType === "livraison" && (
                       <div className="mt-5 space-y-4">
-                        <p className="text-sm text-[#6b5a4a] dark:text-[#a89880]">
-                          Cliquez sur la carte pour choisir votre position.
-                        </p>
+                        <div className="flex items-start gap-2">
+                          <span className="shrink-0 w-4 h-4 rounded-full bg-[#e8a0a0]/20 text-[#c97b7b] dark:text-[#e8a0a0] flex items-center justify-center text-[10px] font-bold italic">
+                            i
+                          </span>
+                          <p className="text-xs italic text-[#6b5a4a] dark:text-[#a89880]">
+                            Nous avons tenté de récupérer votre position. Vous pouvez ajuster le point exact sur la carte, puis cliquer sur Suivant pour confirmer.
+                          </p>
+                        </div>
                         <LocationPicker
                           value={orderLocation}
                           onChange={setOrderLocation}
@@ -831,7 +839,7 @@ export default function Catalog() {
                             disabled={!orderLocation}
                             className="flex-1 py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm disabled:opacity-50"
                           >
-                            Suivant
+                            Confirmer le lieu de livraison
                           </button>
                         </div>
                       </div>
@@ -885,6 +893,7 @@ export default function Catalog() {
                             Contact <span className="text-red-500">*</span>
                           </label>
                           <input
+                            required
                             value={orderContact}
                             onChange={(e) => setOrderContact(e.target.value)}
                             placeholder="Votre contact"
