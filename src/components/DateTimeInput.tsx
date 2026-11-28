@@ -25,6 +25,14 @@ function pad(n: number) {
   return n.toString().padStart(2, "0");
 }
 
+
+function smartTop(r: DOMRect, popupH: number): number {
+  const gap = 6;
+  const below = r.bottom + gap;
+  const above = r.top - popupH - gap;
+  return below + popupH > window.innerHeight ? Math.max(8, above) : below;
+}
+
 export default function DateTimeInput({
   date,
   time,
@@ -133,13 +141,7 @@ export default function DateTimeInput({
             onFocus={() => {
               if (open !== "date") {
                 const r = dateWrapRef.current?.getBoundingClientRect();
-                if (r) {
-                  const popupH = 340;
-                  const below = r.bottom + 8;
-                  const above = r.top - popupH - 8;
-                  const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
-                  setPos({ top, left: r.left });
-                }
+                if (r) setPos({ top: smartTop(r, 300), left: r.left });
                 setOpen("date");
                 setCalView("days");
                 setYearBase(viewDate.getFullYear());
@@ -153,13 +155,7 @@ export default function DateTimeInput({
             onClick={() => {
               if (open === "date") { setOpen(null); return; }
               const r = dateWrapRef.current?.getBoundingClientRect();
-              if (r) {
-                const popupH = 340;
-                const below = r.bottom + 8;
-                const above = r.top - popupH - 8;
-                const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
-                setPos({ top, left: r.left });
-              }
+              if (r) setPos({ top: smartTop(r, 300), left: r.left });
               setOpen("date");
               setCalView("days");
               setYearBase(viewDate.getFullYear());
@@ -350,13 +346,7 @@ export default function DateTimeInput({
             onFocus={() => {
               if (open !== "time") {
                 const r = timeWrapRef.current?.getBoundingClientRect();
-                if (r) {
-                  const popupH = 280;
-                  const below = r.bottom + 8;
-                  const above = r.top - popupH - 8;
-                  const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
-                  setPos({ top, left: r.left });
-                }
+                if (r) setPos({ top: smartTop(r, 320), left: r.left });
                 setOpen("time");
                 setMode("hour");
               }
@@ -369,13 +359,7 @@ export default function DateTimeInput({
             onClick={() => {
               if (open === "time") { setOpen(null); return; }
               const r = timeWrapRef.current?.getBoundingClientRect();
-              if (r) {
-                const popupH = 280;
-                const below = r.bottom + 8;
-                const above = r.top - popupH - 8;
-                const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
-                setPos({ top, left: r.left });
-              }
+              if (r) setPos({ top: smartTop(r, 320), left: r.left });
               setOpen("time");
               setMode("hour");
             }}
