@@ -133,7 +133,13 @@ export default function DateTimeInput({
             onFocus={() => {
               if (open !== "date") {
                 const r = dateWrapRef.current?.getBoundingClientRect();
-                if (r) setPos({ top: r.bottom + 8, left: r.left });
+                if (r) {
+                  const popupH = 340;
+                  const below = r.bottom + 8;
+                  const above = r.top - popupH - 8;
+                  const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
+                  setPos({ top, left: r.left });
+                }
                 setOpen("date");
                 setCalView("days");
                 setYearBase(viewDate.getFullYear());
@@ -147,7 +153,13 @@ export default function DateTimeInput({
             onClick={() => {
               if (open === "date") { setOpen(null); return; }
               const r = dateWrapRef.current?.getBoundingClientRect();
-              if (r) setPos({ top: r.bottom + 8, left: r.left });
+              if (r) {
+                const popupH = 340;
+                const below = r.bottom + 8;
+                const above = r.top - popupH - 8;
+                const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
+                setPos({ top, left: r.left });
+              }
               setOpen("date");
               setCalView("days");
               setYearBase(viewDate.getFullYear());
@@ -338,7 +350,13 @@ export default function DateTimeInput({
             onFocus={() => {
               if (open !== "time") {
                 const r = timeWrapRef.current?.getBoundingClientRect();
-                if (r) setPos({ top: r.bottom + 8, left: r.left });
+                if (r) {
+                  const popupH = 280;
+                  const below = r.bottom + 8;
+                  const above = r.top - popupH - 8;
+                  const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
+                  setPos({ top, left: r.left });
+                }
                 setOpen("time");
                 setMode("hour");
               }
@@ -351,7 +369,13 @@ export default function DateTimeInput({
             onClick={() => {
               if (open === "time") { setOpen(null); return; }
               const r = timeWrapRef.current?.getBoundingClientRect();
-              if (r) setPos({ top: r.bottom + 8, left: r.left });
+              if (r) {
+                const popupH = 280;
+                const below = r.bottom + 8;
+                const above = r.top - popupH - 8;
+                const top = below + popupH > window.innerHeight ? Math.max(8, above) : below;
+                setPos({ top, left: r.left });
+              }
               setOpen("time");
               setMode("hour");
             }}
