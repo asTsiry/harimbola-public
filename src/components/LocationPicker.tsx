@@ -276,7 +276,17 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
           />
         )}
         {routeCoords.length > 0 && (
-          <Polyline positions={routeCoords} pathOptions={{ color: "#ef4444", weight: 4, opacity: 0.85 }} />
+          <Polyline
+            positions={routeCoords}
+            smoothFactor={1.5}
+            pathOptions={{
+              color: "#3b82f6",
+              weight: 5,
+              opacity: 0.6,
+              lineCap: "round",
+              lineJoin: "round",
+            }}
+          />
         )}
           {flyTarget && <FlyTo center={flyTarget} />}
         </MapContainer>
