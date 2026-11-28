@@ -776,6 +776,7 @@ export default function Catalog() {
                         </span>
                       </div>
                       <button
+                        disabled={!orderPortion || !orderQty || !orderDate || !orderTime || !orderContact}
                         onClick={() => {
                           const item: CartItem = {
                             id: Date.now(),
@@ -804,7 +805,7 @@ export default function Catalog() {
                           setOrderOpen(false);
                           setEditingIndex(null);
                         }}
-                        className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition md:col-span-2"
+                        className="w-full py-2.5 rounded-full bg-gradient-to-r from-[#e8a0a0] to-[#c97b7b] text-white font-semibold text-sm hover:shadow transition md:col-span-2 disabled:opacity-50"
                       >
                         {editingIndex != null ? "Sauvegarder" : "Ajouter au panier"}
                       </button>

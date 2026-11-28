@@ -71,6 +71,11 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
   const [satellite, setSatellite] = useState(true);
   const [flyTarget, setFlyTarget] = useState<[number, number] | null>(null);
   const [locating, setLocating] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(t);
+  }, []);
   const [userPos, setUserPos] = useState<[number, number] | null>(null);
   const locatedRef = useRef(false);
   const [distance, setDistance] = useState<number | null>(null);
@@ -224,7 +229,12 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
         </button>
       </div>
       <div className="relative w-full h-64 rounded-2xl overflow-hidden border border-[#e8a0a0]/30">
-        {(locating || searching || distLoading) && (
+        {!mounted && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[#f0e0d4] dark:bg-[#0a0604]">
+            <Loader2 className="w-6 h-6 animate-spin text-[#c97b7b]" />
+          </div>
+        )}
+        {(locating || searching || distLoading) && mounted && (
           <div className="absolute inset-0 z-[1001] flex flex-col items-center justify-center bg-white/60 dark:bg-[#0a0604]/60 backdrop-blur-sm">
             <Loader2 className="w-10 h-10 animate-spin text-[#c97b7b] dark:text-[#e8a0a0]" />
             <span className="mt-3 text-sm font-medium text-[#2a1d13] dark:text-[#f5e9d3]">
@@ -243,7 +253,8 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
         >
           {satellite ? "Carte" : "Satellite"}
         </button>
-        <MapContainer center={center} zoom={18} maxZoom={19} style={{ height: "100%", width: "100%" }} scrollWheelZoom={true}>
+        {mounted && (
+          <MapContainer center={center} zoom={18} maxZoom={19} style={{ height: "100%", width: "100%" }} scrollWheelZoom={true}>
           {satellite ? (
             <TileLayer
               attribution='&copy; Esri'
@@ -290,6 +301,7 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
         )}
           {flyTarget && <FlyTo center={flyTarget} />}
         </MapContainer>
+        )}
       </div>
       {value && (
         <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">

@@ -12,7 +12,7 @@ const DateTimeInput = dynamic(() => import("@/components/DateTimeInput"), { ssr:
 export default function CartDrawer() {
   const { items, removeItem, total, count } = useCart();
   const [open, setOpen] = useState(false);
-  const [orderType, setOrderType] = useState<"recup" | "livraison">("recup");
+  const [orderType, setOrderType] = useState<"recup" | "livraison">("livraison");
   const [orderDate, setOrderDate] = useState("");
   const [orderTime, setOrderTime] = useState("");
 
@@ -121,31 +121,36 @@ export default function CartDrawer() {
                     {formatAriary(total)}
                   </span>
                 </div>
-                <div className="border-t border-[#e8a0a0]/20" />
+                <div className="border-t border-[#c97b7b]/40" />
                 <div className="py-5 space-y-4">
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
-                    <input
-                      type="radio"
-                      className="radio-lg"
-                      name="cartType"
-                      value="recup"
-                      checked={orderType === "recup"}
-                      onChange={() => setOrderType("recup")}
-                    />
-                    À récupérer
+                <div>
+                  <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+                    Mode de réception
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
-                    <input
-                      type="radio"
-                      className="radio-lg"
-                      name="cartType"
-                      value="livraison"
-                      checked={orderType === "livraison"}
-                      onChange={() => setOrderType("livraison")}
-                    />
-                    À livrer
-                  </label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                      <input
+                        type="radio"
+                        className="radio-lg"
+                        name="cartType"
+                        value="livraison"
+                        checked={orderType === "livraison"}
+                        onChange={() => setOrderType("livraison")}
+                      />
+                      À livrer
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-[#2a1d13] dark:text-[#f5e9d3]">
+                      <input
+                        type="radio"
+                        className="radio-lg"
+                        name="cartType"
+                        value="recup"
+                        checked={orderType === "recup"}
+                        onChange={() => setOrderType("recup")}
+                      />
+                      À récupérer
+                    </label>
+                  </div>
                 </div>
                 <DateTimeInput
                   date={orderDate}

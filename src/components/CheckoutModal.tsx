@@ -90,11 +90,9 @@ export default function CheckoutModal() {
               {step === 1 && hasDelivery && (
                 <div className="mt-5 space-y-4">
                   <div className="flex items-start gap-2">
-                    <span className="shrink-0 w-4 h-4 rounded-full bg-[#e8a0a0]/20 text-[#c97b7b] dark:text-[#e8a0a0] flex items-center justify-center text-[10px] font-bold italic">
-                      i
-                    </span>
+                    <Info className="shrink-0 w-7 h-7 text-[#c97b7b] dark:text-[#e8a0a0]" />
                     <p className="text-xs italic text-[#6b5a4a] dark:text-[#a89880]">
-                      Nous avons tenté de récupérer votre position. Vous pouvez ajuster le point exact sur la carte, puis cliquer sur Suivant pour confirmer.
+                      Nous avons tenté de récupérer votre position. Veuillez ajuster le point exact sur la carte, puis confirmer le lieu de livraison.
                     </p>
                   </div>
                   <LocationPicker
