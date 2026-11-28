@@ -27,6 +27,7 @@ export default function Catalog() {
   const [orderCake, setOrderCake] = useState<number | null>(null);
   const [orderStep, setOrderStep] = useState(1);
   const [orderLocation, setOrderLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [orderDistance, setOrderDistance] = useState<number | null>(null);
   const [orderPortion, setOrderPortion] = useState<number | null>(null);
   const [orderQty, setOrderQty] = useState(1);
   const [orderDetails, setOrderDetails] = useState("");
@@ -236,6 +237,7 @@ export default function Catalog() {
                       setOrderTime("");
                       setOrderStep(1);
                       setOrderLocation(null);
+                      setOrderDistance(null);
                       setOrderAddr("");
                       setOrderContact("");
                       setOrderAvance("");
@@ -767,6 +769,7 @@ export default function Catalog() {
                           onChange={setOrderLocation}
                           address={orderAddr}
                           onAddressChange={setOrderAddr}
+                          onDistanceChange={setOrderDistance}
                         />
                         <div className="flex gap-3">
                           <button
@@ -851,6 +854,14 @@ export default function Catalog() {
                             className="w-full px-3 py-2 rounded-xl bg-white dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none focus:border-[#c97b7b]"
                           />
                         </div>
+                        {orderDistance != null && (
+                          <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] md:col-span-2">
+                            Distance (route):{" "}
+                            <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">
+                              {orderDistance.toFixed(2)} km
+                            </span>
+                          </div>
+                        )}
                         <div className="text-sm text-[#2a1d13] dark:text-[#f5e9d3] pt-2 border-t border-[#e8a0a0]/20 md:col-span-2">
                           Total à payer:{" "}
                           <span className="font-bold text-[#8b5a2b] dark:text-[#d4a373]">

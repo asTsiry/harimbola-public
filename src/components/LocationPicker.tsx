@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-leaflet";
+import { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap, Polyline } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -63,11 +63,73 @@ type Props = {
   onChange: (v: { lat: number; lng: number }) => void;
   address: string;
   onAddressChange: (v: string) => void;
+  onDistanceChange?: (km: number | null) => void;
 };
 
-export default function LocationPicker({ value, onChange, address, onAddressChange }: Props) {
+export default function LocationPicker({ value, onChange, address, onAddressChange, onDistanceChange }: Props) {
   const [satellite, setSatellite] = useState(true);
   const [flyTarget, setFlyTarget] = useState<[number, number] | null>(null);
+  const [distance, setDistance] = useState<number | null>(null);
+  const [distLoading, setDistLoading] = useState(false);
+  const [routeCoords, setRouteCoords] = useState<[number, number][]>([]);
+  const [pickedAddress, setPickedAddress] = useState<string>("");
+
+  useEffect(() => {
+    if (!value) {
+      const t = setTimeout(() => {
+        setRouteCoords([]);
+        setPickedAddress("");
+        setDistance(null);
+        onDistanceChange?.(null);
+      }, 0);
+      return () => clearTimeout(t);
+    }
+    const shop: [number, number] = [-18.86889, 47.54821];
+    let cancelled = false;
+    const run = async () => {
+      setDistLoading(true);
+      try {
+        const res = await fetch(
+          `https://router.project-osrm.org/route/v1/driving/${shop[1]},${shop[0]};${value.lng},${value.lat}?overview=full&geometries=geojson`
+        );
+        const data = await res.json();
+        if (cancelled) return;
+        const d = data?.routes?.[0]?.distance;
+        const km = d ? d / 1000 : null;
+        setDistance(km);
+        onDistanceChange?.(km);
+        const coords = data?.routes?.[0]?.geometry?.coordinates;
+        if (coords) {
+          setRouteCoords(coords.map((c: [number, number]) => [c[1], c[0]]));
+        } else {
+          setRouteCoords([]);
+        }
+        // reverse geocode
+        try {
+          const r = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${value.lat}&lon=${value.lng}`
+          );
+          const rd = await r.json();
+          const addr = rd?.display_name || "";
+          setPickedAddress(addr);
+          if (addr) onAddressChange(addr);
+        } catch {
+          setPickedAddress("");
+        }
+      } catch {
+        if (cancelled) return;
+        setDistance(null);
+        onDistanceChange?.(null);
+        setRouteCoords([]);
+      } finally {
+        if (!cancelled) setDistLoading(false);
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [value, onDistanceChange, onAddressChange]);
   const [searching, setSearching] = useState(false);
   const shop: [number, number] = [-18.86889, 47.54821];
   const center: [number, number] = value ? [value.lat, value.lng] : shop;
@@ -133,12 +195,35 @@ export default function LocationPicker({ value, onChange, address, onAddressChan
           <ClickHandler onChange={(lat, lng) => onChange({ lat, lng })} />
           <ShopMarker position={shop} />
         {value && <Marker position={[value.lat, value.lng]} icon={icon} />}
+        {routeCoords.length > 0 && (
+          <Polyline positions={routeCoords} pathOptions={{ color: "#ef4444", weight: 4, opacity: 0.85 }} />
+        )}
           {flyTarget && <FlyTo center={flyTarget} />}
         </MapContainer>
       </div>
       {value && (
         <p className="text-xs text-[#6b5a4a] dark:text-[#a89880]">
           Position: {value.lat.toFixed(5)}, {value.lng.toFixed(5)}
+        </p>
+      )}
+      <div>
+        <label className="text-xs text-[#6b5a4a] dark:text-[#a89880] mb-1 block">
+          Adresse détectée
+        </label>
+        <input
+          readOnly
+          value={pickedAddress}
+          placeholder="Cliquez sur la carte pour détecter l'adresse"
+          className="w-full px-3 py-2 rounded-xl bg-[#f0e0d4] dark:bg-[#050302] border border-[#e8a0a0]/30 text-sm text-[#2a1d13] dark:text-[#f5e9d3] focus:outline-none"
+        />
+      </div>
+      {value && (
+        <p className="text-sm font-semibold text-[#8b5a2b] dark:text-[#d4a373]">
+          {distLoading
+            ? "Calcul de la distance..."
+            : distance != null
+            ? `Distance (route): ${distance.toFixed(2)} km`
+            : "Distance indisponible"}
         </p>
       )}
       <p className="text-xs text-[#6b5a4a] dark:text-[#a89880] italic">
